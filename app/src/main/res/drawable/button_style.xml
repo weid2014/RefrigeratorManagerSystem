@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/btn_bgcolor" />  //填充边框内颜色
+    <stroke android:width="2dp" android:color="@color/white" />   //设置边框的宽度以及颜色
+</shape>

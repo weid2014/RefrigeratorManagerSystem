@@ -1,15 +1,13 @@
-package com.linde.refrigeratormanagementsystem.activity;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.linde.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.linde.refrigeratormanagementsystem.MainActivity;
+import com.linde.custom.CustomActivity;
 import com.linde.refrigeratormanagementsystem.R;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends CustomActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +25,5 @@ public class SplashActivity extends AppCompatActivity {
                 finish();
             }
         },1000);
-
     }
 }

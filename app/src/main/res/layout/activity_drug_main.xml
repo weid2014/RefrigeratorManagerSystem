@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.linde.activity.DrugMainActivity">
+
+    <LinearLayout
+        android:paddingTop="20dp"
+        android:background="@color/bg_color"
+        android:layout_width="match_parent"
+        android:layout_weight="1.2"
+        android:layout_height="0dp">
+        <TextView
+            android:text="@string/title_drug_name"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:textColor="@color/white"
+            android:layout_weight="1"/>
+        <TextView
+            android:text="@string/title_drug_no"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <TextView
+            android:text="@string/title_time"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <TextView
+            android:text="@string/title_drug_sn"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewDrug"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="12"/>
+
+    <LinearLayout
+        android:background="@color/bg_color"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+        <TextView
+            android:padding="4dp"
+            android:id="@+id/tvUserName"
+            android:text="用户名"
+            android:gravity="center_vertical"
+            android:textSize="19sp"
+            android:textColor="@color/white"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
+
+        <Button
+            android:layout_margin="8dp"
+            android:background="@drawable/button_style"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="锁定并登出"
+            android:textColor="@color/white"
+            android:id="@+id/btnExit"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">RefrigeratorManagerSystem</string>
+    <string name="lock_tip1">冰箱已锁</string>
+    <string name="lock_tip2">请刷卡开锁</string>
+    <string name="unlock_tip">冰箱已解锁</string>
+
+    <string name="title_drug_name">药品名称</string>
+    <string name="title_drug_no">药品编号</string>
+    <string name="title_time">入库时间</string>
+    <string name="title_drug_sn">药品序号</string>
 </resources>

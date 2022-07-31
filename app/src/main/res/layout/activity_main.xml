@@ -1,22 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/bg_color"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/test"
-        android:layout_gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hello 主页!"
-        android:gravity="center"
-        android:textSize="19sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imageLock"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:paddingTop="8dp"
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/tvLockStatus1"
+            android:text="@string/lock_tip1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/tvLockStatus2"
+            android:text="@string/lock_tip2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="28dp"
+        android:orientation="vertical"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/imageArrow"
+            android:src="@mipmap/icon_arrow_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/imageSwipeStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+</RelativeLayout>
