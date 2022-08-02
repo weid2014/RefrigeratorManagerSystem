@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RefrigeratorManagerSystem</string>
+    <string name="app_name">药品柜管理系统_V0.5</string>
     <string name="lock_tip1">冰箱已锁</string>
     <string name="lock_tip2">请刷卡开锁</string>
     <string name="unlock_tip">冰箱已解锁</string>
