@@ -11,14 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.linde.bean.DrugBean;
 import com.linde.refrigeratormanagementsystem.R;
 
+import java.util.HashSet;
 import java.util.List;
 
-public class DrugAdapter extends RecyclerView.Adapter<DrugAdapter.ViewHolder> {
-    private List<DrugBean> drugBeanList;
+public class OutDrugAdapter extends RecyclerView.Adapter<OutDrugAdapter.ViewHolder> {
+    private List<List<DrugBean>> allDrugBeanList;
 
     //构造函数,用于吧要展示的数据源传入，并赋予值给累的私有变量
-    public DrugAdapter(List<DrugBean> drugBeanList){
-        this.drugBeanList=drugBeanList;
+    public OutDrugAdapter(List<List<DrugBean>> allDrugBeanList){
+        this.allDrugBeanList=allDrugBeanList;
     }
 
     /**
@@ -31,8 +32,8 @@ public class DrugAdapter extends RecyclerView.Adapter<DrugAdapter.ViewHolder> {
      */
     @NonNull
     @Override
-    public DrugAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_drug,parent,false);
+    public OutDrugAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_drug_out,parent,false);
         ViewHolder viewHolder=new ViewHolder(view);
         return viewHolder;
     }
@@ -45,17 +46,16 @@ public class DrugAdapter extends RecyclerView.Adapter<DrugAdapter.ViewHolder> {
      * @param position
      */
     @Override
-    public void onBindViewHolder(@NonNull DrugAdapter.ViewHolder holder, int position) {
-        DrugBean drugBean=drugBeanList.get(position);
-        holder.tvDrugName.setText(drugBean.getDrugName());
-        holder.tvDrugNo.setText(drugBean.getDrugNo());
-        holder.tvWareHousingTime.setText(drugBean.getWareHousingTime());
-        holder.tvDrugSN.setText(drugBean.getDrugSN());
+    public void onBindViewHolder(@NonNull OutDrugAdapter.ViewHolder holder, int position) {
+        List<DrugBean> drugBeanList=allDrugBeanList.get(position);
+        holder.tvDrugName.setText(drugBeanList.get(0).getDrugName());
+        holder.tvNO.setText(position+"");
+        holder.tvDrugNumber.setText(drugBeanList.size()+"");
     }
 
     @Override
     public int getItemCount() {
-        return drugBeanList.size();
+        return allDrugBeanList.size();
     }
 
     /**
@@ -63,17 +63,15 @@ public class DrugAdapter extends RecyclerView.Adapter<DrugAdapter.ViewHolder> {
      * 传入View参数通常是Recycler View子项的最外层布局
      */
     public class ViewHolder extends RecyclerView.ViewHolder{
+        TextView tvNO;
         TextView tvDrugName;
-        TextView tvDrugNo;
-        TextView tvWareHousingTime;
-        TextView tvDrugSN;
+        TextView tvDrugNumber;
 
         public ViewHolder(View itemView){
             super(itemView);
+            tvNO=itemView.findViewById(R.id.tvNO);
             tvDrugName=itemView.findViewById(R.id.tvDrugName);
-            tvDrugNo=itemView.findViewById(R.id.tvDrugNo);
-            tvWareHousingTime=itemView.findViewById(R.id.tvWareHousingTime);
-            tvDrugSN=itemView.findViewById(R.id.tvDrugSN);
+            tvDrugNumber=itemView.findViewById(R.id.tvDrugNumber);
         }
     }
 

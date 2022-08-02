@@ -8,4 +8,6 @@
     <string name="title_drug_no">药品编号</string>
     <string name="title_time">入库时间</string>
     <string name="title_drug_sn">药品序号</string>
+    <string name="user_out">出库员</string>
+    <string name="user_in">入库员</string>
 </resources>

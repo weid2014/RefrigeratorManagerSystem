@@ -1,8 +1,6 @@
-package com.linde.activity;
-
+package com.linde.presenter;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,25 +14,27 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.linde.activity.DrugMainActivity;
+import com.linde.activity.MainActivity;
 import com.linde.adapter.DrugAdapter;
 import com.linde.adapter.OutDrugAdapter;
 import com.linde.bean.DrugBean;
-import com.linde.custom.CustomActivity;
 import com.linde.global.UserType;
-import com.linde.presenter.DrugMainPresenter;
 import com.linde.refrigeratormanagementsystem.R;
 import com.linde.ui.MyDialog;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class DrugMainActivity extends CustomActivity {
-//    private List<DrugBean> drugBeanList = null;
+public class DrugMainPresenter {
+    private WeakReference<DrugMainActivity> drugMainActivity=null;
+    private List<DrugBean> drugBeanList = null;
     private RecyclerView recyclerViewDrug;
     private DrugAdapter drugAdapter;
     private PopupWindow popupWindow;
-//    private MyCountDownTimer myCountDownTimer;
+    private MyCountDownTimer myCountDownTimer;
     private boolean isFirst = true;
     private Button btnExit;
     private MyDialog myDialog;
@@ -42,26 +42,22 @@ public class DrugMainActivity extends CustomActivity {
     private String userType = "OutUser";
     private String userName;
     private TextView tvUserNameMain;
+    private PopupWindow popupWindowOut;
+    private MyCountDownTimerOut myCountDownTimerOut;
 
-    private DrugMainPresenter drugMainPresenter;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_drug_main);
-        drugMainPresenter=new DrugMainPresenter(this);
-        initView();
+    public DrugMainPresenter(DrugMainActivity activity){
+        drugMainActivity=new WeakReference<>(activity);
+        initData();
     }
 
-
-    /*private void initData() {
-        if (getIntent() != null) {
-            userType = getIntent().getStringExtra("UserType");
+    private void initData() {
+        if (drugMainActivity.get().getIntent() != null) {
+            userType = drugMainActivity.get().getIntent().getStringExtra("UserType");
         }
         if (userType.equals(UserType.OutUser.toString())) {
-            userName = getString(R.string.user_out);
+            userName = drugMainActivity.get().getString(R.string.user_out);
         } else {
-            userName = getString(R.string.user_in);
+            userName = drugMainActivity.get().getString(R.string.user_in);
         }
 
         drugBeanList = new ArrayList<>();
@@ -79,28 +75,18 @@ public class DrugMainActivity extends CustomActivity {
                 drugBeanList.add(drugBean4);
             }
         }
-    }*/
-
-    private void initView() {
-        recyclerViewDrug = findViewById(R.id.recyclerViewDrug);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerViewDrug.setLayoutManager(layoutManager);
-        drugAdapter = new DrugAdapter(drugMainPresenter.getDrugBeanList());
-        recyclerViewDrug.setAdapter(drugAdapter);
-        btnExit = findViewById(R.id.btnExit);
-        btnExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //退出按键,弹出dialog
-                drugMainPresenter.showDiaLog();
-            }
-        });
-        tvUserNameMain=findViewById(R.id.tvUserNameMain);
-        tvUserNameMain.setText(drugMainPresenter.getUserName());
     }
 
-    /*private void showDiaLog() {
-        myDialog = new MyDialog(this, R.style.MyDialog);
+    public List<DrugBean> getDrugBeanList(){
+        return drugBeanList;
+    }
+
+    public String getUserName(){
+        return userName;
+    }
+
+    public void showDiaLog() {
+        myDialog = new MyDialog(drugMainActivity.get(), R.style.MyDialog);
         myDialog.setYesOnclickListener("确定", new MyDialog.onYesOnclickListener() {
             @Override
             public void onYesOnclick() {
@@ -120,13 +106,12 @@ public class DrugMainActivity extends CustomActivity {
         });
         myDialog.show();
         setAlpha(0.2f);
-    }*/
+    }
 
-
-   /* private void showPop() {
+    public void showPop() {
         View contentView = null;
         if (contentView == null) {
-            contentView = LayoutInflater.from(this).inflate(R.layout.pup_tip, null);
+            contentView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.pup_tip, null);
             popupWindow = new PopupWindow(contentView, 900,
                     1200, true);
             popupWindow.setFocusable(false);
@@ -150,20 +135,14 @@ public class DrugMainActivity extends CustomActivity {
             }
         });
         //显示PopupWindow
-        View rootView = LayoutInflater.from(this).inflate(R.layout.activity_drug_main, null);
+        View rootView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.activity_drug_main, null);
         popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
         setAlpha(0.2f);
         myCountDownTimer = new MyCountDownTimer(5000, 1000);
         myCountDownTimer.start();
-    }*/
+    }
 
-    /**
-     * 出库列表
-     */
-   /* private PopupWindow popupWindowOut;
-    private MyCountDownTimerOut myCountDownTimerOut;*/
-
-    /*private void showPopOut(String userType) {
+    private void showPopOut(String userType) {
         int status = 0;
         if (userType.equals(UserType.OutUser.toString())) {
             status = 1;
@@ -172,7 +151,7 @@ public class DrugMainActivity extends CustomActivity {
         }
         View contentView = null;
         if (contentView == null) {
-            contentView = LayoutInflater.from(this).inflate(R.layout.pup_out_list, null);
+            contentView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.pup_out_list, null);
             popupWindowOut = new PopupWindow(contentView, 900,
                     1200, true);
             popupWindowOut.setFocusable(false);
@@ -186,7 +165,7 @@ public class DrugMainActivity extends CustomActivity {
         tvUserName.setText(status == 0 ? "入库列表" : "出库列表");
 
         RecyclerView recyclerViewDrugOut = contentView.findViewById(R.id.recyclerViewDrugOut);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(drugMainActivity.get());
         recyclerViewDrugOut.setLayoutManager(layoutManager);
         HashSet<String> tempSet = new HashSet<>();
         List<List<DrugBean>> allOutList = new ArrayList<>();
@@ -221,29 +200,14 @@ public class DrugMainActivity extends CustomActivity {
             }
         });
         //显示PopupWindow
-        View rootView = LayoutInflater.from(this).inflate(R.layout.activity_drug_main, null);
+        View rootView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.activity_drug_main, null);
         popupWindowOut.showAtLocation(rootView, Gravity.CENTER, 0, 0);
         setAlpha(0.2f);
         myCountDownTimerOut = new MyCountDownTimerOut(5000, 1000);
         myCountDownTimerOut.start();
-    }*/
-
-    /*private void setAlpha(float f) {
-        WindowManager.LayoutParams attributes = getWindow().getAttributes();
-        attributes.alpha = f;
-        getWindow().setAttributes(attributes);
-    }*/
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (isFirst && hasFocus) {
-            drugMainPresenter.showPop();
-            isFirst = false;
-        }
     }
 
-    /*class MyCountDownTimer extends CountDownTimer {
+    class MyCountDownTimer extends CountDownTimer {
 
         public MyCountDownTimer(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
@@ -252,7 +216,8 @@ public class DrugMainActivity extends CustomActivity {
         @Override
         public void onTick(long l) {
             int progress = (int) (l / 1000);
-            tvCountDownTime.setText(progress + "秒后将自动关闭");
+            //wait wait wait
+//            tvCountDownTime.setText(progress + "秒后将自动关闭");
         }
 
         @Override
@@ -273,21 +238,28 @@ public class DrugMainActivity extends CustomActivity {
         @Override
         public void onTick(long l) {
             int progress = (int) (l / 1000);
-            tvCountDownTime.setText(progress + "秒后将自动关闭");
+            //wait wait wait
+//            tvCountDownTime.setText(progress + "秒后将自动关闭");
         }
 
         @Override
         public void onFinish() {
             LogOut();
         }
-    }*/
+    }
 
-  /*  private void LogOut() {
+    private void setAlpha(float f) {
+        WindowManager.LayoutParams attributes = drugMainActivity.get().getWindow().getAttributes();
+        attributes.alpha = f;
+        drugMainActivity.get().getWindow().setAttributes(attributes);
+    }
+
+    private void LogOut() {
         if (popupWindow != null) {
             popupWindow.dismiss();
             setAlpha(1.0f);
-            startActivity(new Intent(DrugMainActivity.this, MainActivity.class));
-            finish();
+            drugMainActivity.get().startActivity(new Intent(drugMainActivity.get(), MainActivity.class));
+            drugMainActivity.get().finish();
         }
-    }*/
+    }
 }

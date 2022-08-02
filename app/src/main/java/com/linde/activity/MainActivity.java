@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.linde.custom.CustomActivity;
+import com.linde.global.UserType;
 import com.linde.refrigeratormanagementsystem.R;
 
 public class MainActivity extends CustomActivity implements View.OnClickListener{
@@ -18,6 +19,9 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
     private TextView tvLockStatus1;
     private TextView tvLockStatus2;
     private boolean isLocked=true;
+    private TextView btnOutUser;
+    private TextView btnInUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,20 +42,30 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
 
         tvLockStatus1=findViewById(R.id.tvLockStatus1);
         tvLockStatus2=findViewById(R.id.tvLockStatus2);
+        btnOutUser=findViewById(R.id.btnOutUser);
+        btnInUser=findViewById(R.id.btnInUser);
+        btnOutUser.setOnClickListener(this);
+        btnInUser.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.imageLock:
-                openLock();
+                openLock(UserType.OutUser);
+                break;
+            case R.id.btnOutUser:
+                openLock(UserType.OutUser);
+                break;
+            case R.id.btnInUser:
+                openLock(UserType.InUser);
                 break;
             default:
                 break;
         }
     }
 
-    private void openLock(){
+    private void openLock(UserType type){
         if(isLocked){
             imageLock.setBackgroundResource(R.mipmap.icon_nolock);
             imageSwipeStatus.setBackgroundResource(R.mipmap.icon_swipe);
@@ -59,7 +73,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
             tvLockStatus1.setText(getString(R.string.unlock_tip));
             tvLockStatus2.setText("");
             isLocked=!isLocked;
-            jumpToIdentity();
+            jumpToIdentity(type);
         }else {
             imageLock.setBackgroundResource(R.mipmap.icon_lock);
             imageSwipeStatus.setBackgroundResource(R.mipmap.icon_noswipe);
@@ -70,12 +84,12 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
         }
     }
 
-    private void jumpToIdentity(){
+    private void jumpToIdentity(UserType type){
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent intent=new Intent(MainActivity.this, DrugMainActivity.class);
-                intent.putExtra("from","MainActivity");
+                intent.putExtra("UserType",type.toString());
                 startActivity(intent);
                 finish();
             }

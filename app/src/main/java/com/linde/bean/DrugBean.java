@@ -5,13 +5,25 @@ public class DrugBean {
     private String drugName;//药品名称
     private String drugNo;//药品编号
     private String wareHousingTime;//入库时间
+    private String outHousingTime;//出库时间
     private String drugSN;//药品序号
+    private int drugStatus;//药品出入库状态  0-入库，1-出库
 
-    public DrugBean(String drugName, String drugNo, String wareHousingTime, String drugSN) {
+    public DrugBean(String drugName, String drugNo, String wareHousingTime, String outHousingTime, String drugSN, int drugStatus) {
         this.drugName = drugName;
         this.drugNo = drugNo;
         this.wareHousingTime = wareHousingTime;
+        this.outHousingTime = outHousingTime;
         this.drugSN = drugSN;
+        this.drugStatus = drugStatus;
+    }
+
+    public String getOutHousingTime() {
+        return outHousingTime;
+    }
+
+    public void setOutHousingTime(String outHousingTime) {
+        this.outHousingTime = outHousingTime;
     }
 
     public String getDrugName() {
@@ -44,5 +56,13 @@ public class DrugBean {
 
     public void setDrugSN(String drugSN) {
         this.drugSN = drugSN;
+    }
+
+    public int getDrugStatus() {
+        return drugStatus;
+    }
+
+    public void setDrugStatus(int drugStatus) {
+        this.drugStatus = drugStatus;
     }
 }

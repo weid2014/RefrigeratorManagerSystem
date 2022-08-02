@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="ui_corners_radius">4dp</dimen>
+    <dimen name="ui_default_select_dialog_list_item_pad_left">10dp</dimen>
+    <dimen name="ui_default_select_dialog_list_item_pad_right">10dp</dimen>
+    <dimen name="signal_list_item_high">40dp</dimen>
+    <dimen name="ui_default_select_dialog_list_item_text_size">16sp</dimen>
+    <dimen name="normal_size">16sp</dimen>
+    <dimen name="ui_default_select_dialog_head_high">46dp</dimen>
+    <dimen name="ui_default_select_dialog_head_title_text_size">20sp</dimen>
+    <dimen name="ui_default_select_dialog_bottom_tools_bar_height">45dp</dimen>
+    <dimen name="normal_size_24">16sp</dimen>
+    <dimen name="signal_perference_high">48dp</dimen>
+    <dimen name="signal_perference_title_text_size">18sp</dimen>
+    <dimen name="signal_perference_right_select_item_text_size">16sp</dimen>
+    <dimen name="ui_checkbox_textview_margin">15dp</dimen>
+
+    <!-- 选择框的单项的高度 -->
+    <dimen name="ui_default_select_dialog_list_item_high">44dp</dimen>
+</resources>
