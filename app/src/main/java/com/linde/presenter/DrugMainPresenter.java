@@ -31,19 +31,15 @@ import java.util.List;
 public class DrugMainPresenter {
     private WeakReference<DrugMainActivity> drugMainActivity=null;
     private List<DrugBean> drugBeanList = null;
-    private RecyclerView recyclerViewDrug;
-    private DrugAdapter drugAdapter;
     private PopupWindow popupWindow;
     private MyCountDownTimer myCountDownTimer;
-    private boolean isFirst = true;
-    private Button btnExit;
     private MyDialog myDialog;
-    private TextView tvCountDownTime;
     private String userType = "OutUser";
     private String userName;
-    private TextView tvUserNameMain;
     private PopupWindow popupWindowOut;
     private MyCountDownTimerOut myCountDownTimerOut;
+    private  TextView tvCountDownTime;
+
 
     public DrugMainPresenter(DrugMainActivity activity){
         drugMainActivity=new WeakReference<>(activity);
@@ -217,7 +213,7 @@ public class DrugMainPresenter {
         public void onTick(long l) {
             int progress = (int) (l / 1000);
             //wait wait wait
-//            tvCountDownTime.setText(progress + "秒后将自动关闭");
+            tvCountDownTime.setText(progress + "秒后将自动关闭");
         }
 
         @Override
@@ -239,7 +235,7 @@ public class DrugMainPresenter {
         public void onTick(long l) {
             int progress = (int) (l / 1000);
             //wait wait wait
-//            tvCountDownTime.setText(progress + "秒后将自动关闭");
+            tvCountDownTime.setText(progress + "秒后将自动关闭");
         }
 
         @Override
