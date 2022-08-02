@@ -3,6 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android/1/RefrigeratorManagerSystem/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Android/1/RefrigeratorManagerSystem/app/src/main/res/layout/activity_splash.xml" value="0.15520833333333334" />
+        <entry key="..\:/Android/1/RefrigeratorManagerSystem/app/src/main/res/layout/dialog.xml" value="0.264" />
+        <entry key="..\:/Android/1/RefrigeratorManagerSystem/app/src/main/res/layout/item_drug.xml" value="0.15520833333333334" />
+        <entry key="..\:/Android/1/RefrigeratorManagerSystem/app/src/main/res/layout/pup_failt.xml" value="0.15520833333333334" />
+        <entry key="..\:/Android/1/RefrigeratorManagerSystem/app/src/main/res/layout/pup_out_list.xml" value="0.15520833333333334" />
+        <entry key="..\:/Android/1/RefrigeratorManagerSystem/app/src/main/res/layout/pup_tip.xml" value="0.15520833333333334" />
         <entry key="..\:/work/RefrigeratorManagerSystem/app/src/main/res/drawable/check_box_5.xml" value="0.139" />
         <entry key="..\:/work/RefrigeratorManagerSystem/app/src/main/res/drawable/free_dialog_bg.xml" value="0.139" />
         <entry key="..\:/work/RefrigeratorManagerSystem/app/src/main/res/drawable/ic_launcher_background.xml" value="0.139" />

@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.linde.custom.CustomActivity;
 import com.linde.global.UserType;
+import com.linde.presenter.DrugMainPresenter;
+import com.linde.presenter.MainPresenter;
 import com.linde.refrigeratormanagementsystem.R;
 
 public class MainActivity extends CustomActivity implements View.OnClickListener{
@@ -21,14 +23,15 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
     private boolean isLocked=true;
     private TextView btnOutUser;
     private TextView btnInUser;
-
+    private TextView btnNoAccess;
+    private MainPresenter mainPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
         init();
-
+        mainPresenter=new MainPresenter(this);
     }
     private void init(){
         imageSwipeStatus=findViewById(R.id.imageSwipeStatus);
@@ -44,8 +47,10 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
         tvLockStatus2=findViewById(R.id.tvLockStatus2);
         btnOutUser=findViewById(R.id.btnOutUser);
         btnInUser=findViewById(R.id.btnInUser);
+        btnNoAccess=findViewById(R.id.btnNoAccess);
         btnOutUser.setOnClickListener(this);
         btnInUser.setOnClickListener(this);
+        btnNoAccess.setOnClickListener(this);
     }
 
     @Override
@@ -59,6 +64,9 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
                 break;
             case R.id.btnInUser:
                 openLock(UserType.InUser);
+                break;
+            case R.id.btnNoAccess:
+                mainPresenter.showCanNotAccess();
                 break;
             default:
                 break;

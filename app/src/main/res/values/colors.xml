@@ -10,4 +10,5 @@
     <color name="bg_color">#3f9fc2</color>
     <color name="btn_bgcolor">#cccccc</color>
     <color name="btn_close">#ff7500</color>
+    <color name="bg_fail_color">#AA474343</color>
 </resources>

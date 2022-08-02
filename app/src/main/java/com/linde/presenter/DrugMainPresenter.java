@@ -81,6 +81,29 @@ public class DrugMainPresenter {
         return userName;
     }
 
+
+    public void showCanNotAccess(){
+        View contentView = null;
+        if (contentView == null) {
+            contentView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.pup_failt, null);
+            popupWindow = new PopupWindow(contentView, 900,
+                    1200, true);
+            popupWindow.setFocusable(false);
+            popupWindow.setOutsideTouchable(false);
+            popupWindow.setClippingEnabled(false);
+
+        } else {
+            contentView = popupWindow.getContentView();
+        }
+
+        //显示PopupWindow
+        View rootView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.activity_main, null);
+        popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
+        setAlpha(0.2f);
+        myCountDownTimer = new MyCountDownTimer(5000, 1000);
+        myCountDownTimer.start();
+    }
+
     public void showDiaLog() {
         myDialog = new MyDialog(drugMainActivity.get(), R.style.MyDialog);
         myDialog.setYesOnclickListener("确定", new MyDialog.onYesOnclickListener() {
@@ -118,7 +141,7 @@ public class DrugMainPresenter {
             contentView = popupWindow.getContentView();
         }
         TextView tvUserName = contentView.findViewById(R.id.tvUserName);
-        tvUserName.setText(userName);
+        tvUserName.setText("您好"+userName);
         tvCountDownTime = contentView.findViewById(R.id.tvCountDownTime);
         ImageButton btnClose = contentView.findViewById(R.id.btnClose);
         btnClose.setOnClickListener(new View.OnClickListener() {
