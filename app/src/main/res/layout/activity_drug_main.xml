@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,73 +7,78 @@
     tools:context="com.linde.activity.DrugMainActivity">
 
     <LinearLayout
-        android:paddingTop="20dp"
-        android:background="@color/bg_color"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1.2"
-        android:layout_height="0dp">
+        android:background="@color/bg_color"
+        android:paddingTop="20dp">
+
         <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/title_drug_name"
-            android:layout_width="0dp"
-            android:gravity="center"
-            android:layout_height="match_parent"
-            android:textColor="@color/white"
-            android:layout_weight="1"/>
+            android:textColor="@color/white" />
+
         <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/title_drug_no"
-            android:layout_width="0dp"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:textColor="@color/white" />
+
         <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/title_time"
-            android:layout_width="0dp"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:textColor="@color/white" />
+
         <TextView
-            android:text="@string/title_drug_sn"
             android:layout_width="0dp"
-            android:gravity="center"
-            android:textColor="@color/white"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/title_drug_sn"
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewDrug"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="12"/>
+        android:layout_weight="12" />
 
     <LinearLayout
-        android:background="@color/bg_color"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="horizontal"
-        android:layout_weight="1">
-        <TextView
-            android:padding="4dp"
-            android:id="@+id/tvUserNameMain"
-            android:text="用户名"
-            android:gravity="center_vertical"
-            android:textSize="19sp"
-            android:textColor="@color/white"
-            android:layout_weight="2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+        android:layout_weight="1"
+        android:background="@color/bg_color"
+        android:orientation="horizontal">
 
-        <Button
-            android:layout_margin="8dp"
-            android:background="@drawable/button_style"
+        <TextView
+            android:id="@+id/tvUserNameMain"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="锁定并登出"
+            android:layout_weight="2"
+            android:gravity="center_vertical"
+            android:padding="4dp"
+            android:text="用户名"
             android:textColor="@color/white"
-            android:id="@+id/btnExit"/>
+            android:textSize="19sp" />
+
+        <Button
+            android:id="@+id/btnExit"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_style"
+            android:text="锁定并登出"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </LinearLayout>

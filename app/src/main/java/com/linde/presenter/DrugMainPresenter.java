@@ -108,8 +108,8 @@ public class DrugMainPresenter {
         View contentView = null;
         if (contentView == null) {
             contentView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.pup_tip, null);
-            popupWindow = new PopupWindow(contentView, 900,
-                    1200, true);
+            popupWindow = new PopupWindow(contentView, 600,
+                    800, true);
             popupWindow.setFocusable(false);
             popupWindow.setOutsideTouchable(false);
             popupWindow.setClippingEnabled(false);
@@ -118,7 +118,7 @@ public class DrugMainPresenter {
             contentView = popupWindow.getContentView();
         }
         TextView tvUserName = contentView.findViewById(R.id.tvUserName);
-        tvUserName.setText(userName);
+        tvUserName.setText("你好，"+userName);
         tvCountDownTime = contentView.findViewById(R.id.tvCountDownTime);
         ImageButton btnClose = contentView.findViewById(R.id.btnClose);
         btnClose.setOnClickListener(new View.OnClickListener() {
@@ -148,8 +148,8 @@ public class DrugMainPresenter {
         View contentView = null;
         if (contentView == null) {
             contentView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.pup_out_list, null);
-            popupWindowOut = new PopupWindow(contentView, 900,
-                    1200, true);
+            popupWindowOut = new PopupWindow(contentView, 600,
+                    800, true);
             popupWindowOut.setFocusable(false);
             popupWindowOut.setOutsideTouchable(false);
             popupWindowOut.setClippingEnabled(false);
