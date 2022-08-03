@@ -27,17 +27,15 @@ public class MainPresenter {
         mainActivity=new WeakReference<>(activity);
     }
     public void showCanNotAccess(){
-        View contentView = null;
-        if (contentView == null) {
-            contentView = LayoutInflater.from(mainActivity.get()).inflate(R.layout.pup_failt, null);
-            popupWindow = new PopupWindow(contentView, 900,
-                    1200, true);
+
+        if (popupWindow == null) {
+            View contentView = LayoutInflater.from(mainActivity.get()).inflate(R.layout.pup_failt, null);
+            popupWindow = new PopupWindow(contentView, 600,
+                    800, true);
             popupWindow.setFocusable(false);
             popupWindow.setOutsideTouchable(false);
             popupWindow.setClippingEnabled(false);
 
-        } else {
-            contentView = popupWindow.getContentView();
         }
 
         //显示PopupWindow

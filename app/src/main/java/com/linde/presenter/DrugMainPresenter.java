@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.linde.activity.DrugMainActivity;
 import com.linde.activity.MainActivity;
-import com.linde.adapter.DrugAdapter;
+
 import com.linde.adapter.OutDrugAdapter;
 import com.linde.bean.DrugBean;
 import com.linde.global.UserType;
@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class DrugMainPresenter {
-    private WeakReference<DrugMainActivity> drugMainActivity=null;
+    private WeakReference<DrugMainActivity> drugMainActivity = null;
     private List<DrugBean> drugBeanList = null;
     private PopupWindow popupWindow;
     private MyCountDownTimer myCountDownTimer;
@@ -38,11 +38,11 @@ public class DrugMainPresenter {
     private String userName;
     private PopupWindow popupWindowOut;
     private MyCountDownTimerOut myCountDownTimerOut;
-    private  TextView tvCountDownTime;
+    private TextView tvCountDownTime;
 
 
-    public DrugMainPresenter(DrugMainActivity activity){
-        drugMainActivity=new WeakReference<>(activity);
+    public DrugMainPresenter(DrugMainActivity activity) {
+        drugMainActivity = new WeakReference<>(activity);
         initData();
     }
 
@@ -73,35 +73,12 @@ public class DrugMainPresenter {
         }
     }
 
-    public List<DrugBean> getDrugBeanList(){
+    public List<DrugBean> getDrugBeanList() {
         return drugBeanList;
     }
 
-    public String getUserName(){
+    public String getUserName() {
         return userName;
-    }
-
-
-    public void showCanNotAccess(){
-        View contentView = null;
-        if (contentView == null) {
-            contentView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.pup_failt, null);
-            popupWindow = new PopupWindow(contentView, 900,
-                    1200, true);
-            popupWindow.setFocusable(false);
-            popupWindow.setOutsideTouchable(false);
-            popupWindow.setClippingEnabled(false);
-
-        } else {
-            contentView = popupWindow.getContentView();
-        }
-
-        //显示PopupWindow
-        View rootView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.activity_main, null);
-        popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
-        setAlpha(0.2f);
-        myCountDownTimer = new MyCountDownTimer(5000, 1000);
-        myCountDownTimer.start();
     }
 
     public void showDiaLog() {
@@ -131,8 +108,8 @@ public class DrugMainPresenter {
         View contentView = null;
         if (contentView == null) {
             contentView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.pup_tip, null);
-            popupWindow = new PopupWindow(contentView, 900,
-                    1200, true);
+            popupWindow = new PopupWindow(contentView, 600,
+                    800, true);
             popupWindow.setFocusable(false);
             popupWindow.setOutsideTouchable(false);
             popupWindow.setClippingEnabled(false);
@@ -141,7 +118,7 @@ public class DrugMainPresenter {
             contentView = popupWindow.getContentView();
         }
         TextView tvUserName = contentView.findViewById(R.id.tvUserName);
-        tvUserName.setText("您好"+userName);
+        tvUserName.setText("你好，" + userName);
         tvCountDownTime = contentView.findViewById(R.id.tvCountDownTime);
         ImageButton btnClose = contentView.findViewById(R.id.btnClose);
         btnClose.setOnClickListener(new View.OnClickListener() {
@@ -171,8 +148,8 @@ public class DrugMainPresenter {
         View contentView = null;
         if (contentView == null) {
             contentView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.pup_out_list, null);
-            popupWindowOut = new PopupWindow(contentView, 900,
-                    1200, true);
+            popupWindowOut = new PopupWindow(contentView, 600,
+                    800, true);
             popupWindowOut.setFocusable(false);
             popupWindowOut.setOutsideTouchable(false);
             popupWindowOut.setClippingEnabled(false);
