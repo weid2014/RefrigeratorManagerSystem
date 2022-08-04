@@ -154,6 +154,8 @@ public class DrugMainPresenter {
 
     public void showPopSerialPortTest() {
         serialCom = new SerialControl();
+        mSerialPortFinder= new SerialPortFinder();
+        String[] entryValues = mSerialPortFinder.getAllDevicesPath();
 
         View contentView = null;
         if (contentView == null) {
@@ -179,6 +181,7 @@ public class DrugMainPresenter {
         Button btnDisConnect=contentView.findViewById(R.id.btnDisConnect);
         Button btnSend=contentView.findViewById(R.id.btnSend);
         TextView tvResult=contentView.findViewById(R.id.tvResult);
+        tvResult.setText(entryValues.toString());
 
         String devicePath=edDevicePath.getText().toString();
         String port=edPort.getText().toString();
@@ -187,11 +190,9 @@ public class DrugMainPresenter {
         btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                    }
-                }).start();
+                serialCom.setPort(devicePath);
+                serialCom.setBaudRate(port);
+                OpenComPort(serialCom);
 
                 drugMainActivity.get().showTipsInfo("port"+port+"devicePath="+devicePath);
                 tvResult.setText("port"+port+"devicePath="+devicePath);
@@ -201,6 +202,7 @@ public class DrugMainPresenter {
             @Override
             public void onClick(View view) {
                 //关闭串口
+                CloseComPort(serialCom);
                 drugMainActivity.get().showTipsInfo("serialPortService.close()");
             }
         });
