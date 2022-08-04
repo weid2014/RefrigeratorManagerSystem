@@ -10,4 +10,9 @@
     <string name="title_drug_sn">药品序号</string>
     <string name="user_out">出库员</string>
     <string name="user_in">入库员</string>
+
+    <!-- ShowMessage -->
+    <string name="No_read_or_write_permissions">Serial port failed to open: no serial read / write permissions</string>
+    <string name="Unknown_error">Failed to open serial port: unknown error!</string>
+    <string name="Parameter_error">Failed to open serial port: parameter error!</string>
 </resources>

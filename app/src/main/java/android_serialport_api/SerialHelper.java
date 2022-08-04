@@ -1,15 +1,10 @@
-package com.linde.serial;
-
-import android.util.Log;
-
-import com.linde.bean.ComBean;
+package android_serialport_api;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.InvalidParameterException;
-import java.util.Arrays;
 
 /**
  * 串口辅助工具类

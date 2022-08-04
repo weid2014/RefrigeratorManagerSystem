@@ -29,6 +29,20 @@ public class DrugMainActivity extends CustomActivity {
         setContentView(R.layout.activity_drug_main);
         drugMainPresenter = new DrugMainPresenter(this);
         initView();
+/*//获取所有串口地址
+        String[] devices = new SerialPortFinder().getDevices();
+        //打开串口，设置读取返回时间
+        SerialPortService serialPortService=new SerialPortBuilder().setTimeOut(100L).setBaudrate(9600).setDevicePath("dev/ttys4").createService();
+        //发送指令
+        //发送byte数组
+        byte[] receiveData=serialPortService.sendData(new byte[2]);
+        //发送16进制的字符串
+        byte[] receiveData64=serialPortService.sendData("55AA0101010002");
+        showTipsInfo(ByteStringUtil.byteArrayToHexStr(receiveData64));
+        //打开或者关闭日志，默认关闭
+        serialPortService.isOutputLog(true);
+        //关闭串口
+        serialPortService.close();*/
     }
 
 
@@ -48,6 +62,12 @@ public class DrugMainActivity extends CustomActivity {
         });
         tvUserNameMain = findViewById(R.id.tvUserNameMain);
         tvUserNameMain.setText(drugMainPresenter.getUserName());
+        tvUserNameMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drugMainPresenter.showPopSerialPortTest();
+            }
+        });
     }
 
     @Override
