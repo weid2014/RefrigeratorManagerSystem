@@ -39,35 +39,33 @@ import android_serialport_api.MyFunc;
 import android_serialport_api.SerialHelper;
 import android_serialport_api.SerialPortFinder;
 
-public class DrugMainPresenter {
-    private WeakReference<DrugMainActivity> drugMainActivity=null;
+public class DrugMainPresenter extends PresenterBase implements IDrugMainPresenter {
+
     private List<DrugBean> drugBeanList = null;
-    private PopupWindow popupWindow;
-    private MyCountDownTimer myCountDownTimer;
     private MyDialog myDialog;
     private String userType = "OutUser";
     private String userName;
     private PopupWindow popupWindowOut;
     private MyCountDownTimerOut myCountDownTimerOut;
-    private  TextView tvCountDownTime;
+    private TextView tvCountDownTime;
 
     SerialControl serialCom;//串口
 
-    public DrugMainPresenter(DrugMainActivity activity){
-        drugMainActivity=new WeakReference<>(activity);
+    public DrugMainPresenter(DrugMainActivity activity) {
+        super(activity);
         initData();
         DispQueue = new DispQueueThread();
         DispQueue.start();
     }
 
     private void initData() {
-        if (drugMainActivity.get().getIntent() != null) {
-            userType = drugMainActivity.get().getIntent().getStringExtra("UserType");
+        if (customActivity.get().getIntent() != null) {
+            userType = customActivity.get().getIntent().getStringExtra("UserType");
         }
         if (userType.equals(UserType.OutUser.toString())) {
-            userName = drugMainActivity.get().getString(R.string.user_out);
+            userName = customActivity.get().getString(R.string.user_out);
         } else {
-            userName = drugMainActivity.get().getString(R.string.user_in);
+            userName = customActivity.get().getString(R.string.user_in);
         }
 
         drugBeanList = new ArrayList<>();
@@ -87,16 +85,19 @@ public class DrugMainPresenter {
         }
     }
 
-    public List<DrugBean> getDrugBeanList(){
+    @Override
+    public List<DrugBean> getDrugBeanList() {
         return drugBeanList;
     }
 
-    public String getUserName(){
+    @Override
+    public String getUserName() {
         return userName;
     }
 
+    @Override
     public void showDiaLog() {
-        myDialog = new MyDialog(drugMainActivity.get(), R.style.MyDialog);
+        myDialog = new MyDialog(customActivity.get(), R.style.MyDialog);
         myDialog.setYesOnclickListener("确定", new MyDialog.onYesOnclickListener() {
             @Override
             public void onYesOnclick() {
@@ -118,10 +119,11 @@ public class DrugMainPresenter {
         setAlpha(0.2f);
     }
 
+    @Override
     public void showPop() {
         View contentView = null;
         if (contentView == null) {
-            contentView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.pup_tip, null);
+            contentView = LayoutInflater.from(customActivity.get()).inflate(R.layout.pup_tip, null);
             popupWindow = new PopupWindow(contentView, 600,
                     800, true);
             popupWindow.setFocusable(false);
@@ -132,7 +134,7 @@ public class DrugMainPresenter {
             contentView = popupWindow.getContentView();
         }
         TextView tvUserName = contentView.findViewById(R.id.tvUserName);
-        tvUserName.setText("你好，"+userName);
+        tvUserName.setText("你好，" + userName);
         tvCountDownTime = contentView.findViewById(R.id.tvCountDownTime);
         ImageButton btnClose = contentView.findViewById(R.id.btnClose);
         btnClose.setOnClickListener(new View.OnClickListener() {
@@ -145,21 +147,22 @@ public class DrugMainPresenter {
             }
         });
         //显示PopupWindow
-        View rootView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.activity_drug_main, null);
+        View rootView = LayoutInflater.from(customActivity.get()).inflate(R.layout.activity_drug_main, null);
         popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
         setAlpha(0.2f);
         myCountDownTimer = new MyCountDownTimer(5000, 1000);
         myCountDownTimer.start();
     }
 
+    @Override
     public void showPopSerialPortTest() {
         serialCom = new SerialControl();
-        mSerialPortFinder= new SerialPortFinder();
+        mSerialPortFinder = new SerialPortFinder();
         String[] entryValues = mSerialPortFinder.getAllDevicesPath();
 
         View contentView = null;
         if (contentView == null) {
-            contentView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.pup_serial_port, null);
+            contentView = LayoutInflater.from(customActivity.get()).inflate(R.layout.pup_serial_port, null);
             popupWindow = new PopupWindow(contentView, 600,
                     800, true);
             popupWindow.setFocusable(false);
@@ -174,18 +177,18 @@ public class DrugMainPresenter {
         //wait wait wait
 
 
-        EditText edDevicePath=contentView.findViewById(R.id.edDevicePath);
-        EditText edPort=contentView.findViewById(R.id.edPort);
-        EditText edMessage=contentView.findViewById(R.id.edMessage);
-        Button btnConnect=contentView.findViewById(R.id.btnConnect);
-        Button btnDisConnect=contentView.findViewById(R.id.btnDisConnect);
-        Button btnSend=contentView.findViewById(R.id.btnSend);
-        TextView tvResult=contentView.findViewById(R.id.tvResult);
+        EditText edDevicePath = contentView.findViewById(R.id.edDevicePath);
+        EditText edPort = contentView.findViewById(R.id.edPort);
+        EditText edMessage = contentView.findViewById(R.id.edMessage);
+        Button btnConnect = contentView.findViewById(R.id.btnConnect);
+        Button btnDisConnect = contentView.findViewById(R.id.btnDisConnect);
+        Button btnSend = contentView.findViewById(R.id.btnSend);
+        TextView tvResult = contentView.findViewById(R.id.tvResult);
         tvResult.setText(entryValues.toString());
 
-        String devicePath=edDevicePath.getText().toString();
-        String port=edPort.getText().toString();
-        String message=edMessage.getText().toString();
+        String devicePath = edDevicePath.getText().toString();
+        String port = edPort.getText().toString();
+        String message = edMessage.getText().toString();
 
         btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,8 +197,8 @@ public class DrugMainPresenter {
                 serialCom.setBaudRate(port);
                 OpenComPort(serialCom);
 
-                drugMainActivity.get().showTipsInfo("port"+port+"devicePath="+devicePath);
-                tvResult.setText("port"+port+"devicePath="+devicePath);
+                customActivity.get().showTipsInfo("port" + port + "devicePath=" + devicePath);
+                tvResult.setText("port" + port + "devicePath=" + devicePath);
             }
         });
         btnDisConnect.setOnClickListener(new View.OnClickListener() {
@@ -203,7 +206,7 @@ public class DrugMainPresenter {
             public void onClick(View view) {
                 //关闭串口
                 CloseComPort(serialCom);
-                drugMainActivity.get().showTipsInfo("serialPortService.close()");
+                customActivity.get().showTipsInfo("serialPortService.close()");
             }
         });
         btnSend.setOnClickListener(new View.OnClickListener() {
@@ -225,7 +228,7 @@ public class DrugMainPresenter {
             }
         });
         //显示PopupWindow
-        View rootView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.activity_drug_main, null);
+        View rootView = LayoutInflater.from(customActivity.get()).inflate(R.layout.activity_drug_main, null);
         popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
         setAlpha(0.2f);
     }
@@ -239,7 +242,7 @@ public class DrugMainPresenter {
         }
         View contentView = null;
         if (contentView == null) {
-            contentView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.pup_out_list, null);
+            contentView = LayoutInflater.from(customActivity.get()).inflate(R.layout.pup_out_list, null);
             popupWindowOut = new PopupWindow(contentView, 600,
                     800, true);
             popupWindowOut.setFocusable(false);
@@ -253,7 +256,7 @@ public class DrugMainPresenter {
         tvUserName.setText(status == 0 ? "入库列表" : "出库列表");
 
         RecyclerView recyclerViewDrugOut = contentView.findViewById(R.id.recyclerViewDrugOut);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(drugMainActivity.get());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(customActivity.get());
         recyclerViewDrugOut.setLayoutManager(layoutManager);
         HashSet<String> tempSet = new HashSet<>();
         List<List<DrugBean>> allOutList = new ArrayList<>();
@@ -288,34 +291,18 @@ public class DrugMainPresenter {
             }
         });
         //显示PopupWindow
-        View rootView = LayoutInflater.from(drugMainActivity.get()).inflate(R.layout.activity_drug_main, null);
+        View rootView = LayoutInflater.from(customActivity.get()).inflate(R.layout.activity_drug_main, null);
         popupWindowOut.showAtLocation(rootView, Gravity.CENTER, 0, 0);
         setAlpha(0.2f);
         myCountDownTimerOut = new MyCountDownTimerOut(5000, 1000);
         myCountDownTimerOut.start();
     }
 
-    class MyCountDownTimer extends CountDownTimer {
-
-        public MyCountDownTimer(long millisInFuture, long countDownInterval) {
-            super(millisInFuture, countDownInterval);
-        }
-
-        @Override
-        public void onTick(long l) {
-            int progress = (int) (l / 1000);
-            //wait wait wait
-            tvCountDownTime.setText(progress + "秒后将自动关闭");
-        }
-
-        @Override
-        public void onFinish() {
-            if (popupWindow != null) {
-                popupWindow.dismiss();
-                setAlpha(1.0f);
-            }
-        }
+    @Override
+    protected void setTipMsg(String msg) {
+        tvCountDownTime.setText(msg);
     }
+
 
     class MyCountDownTimerOut extends CountDownTimer {
 
@@ -336,26 +323,23 @@ public class DrugMainPresenter {
         }
     }
 
-    private void setAlpha(float f) {
-        WindowManager.LayoutParams attributes = drugMainActivity.get().getWindow().getAttributes();
-        attributes.alpha = f;
-        drugMainActivity.get().getWindow().setAttributes(attributes);
-    }
 
     private void LogOut() {
         if (popupWindow != null) {
             popupWindow.dismiss();
             setAlpha(1.0f);
-            drugMainActivity.get().startActivity(new Intent(drugMainActivity.get(), MainActivity.class));
-            drugMainActivity.get().finish();
+            customActivity.get().startActivity(new Intent(customActivity.get(), MainActivity.class));
+            customActivity.get().finish();
         }
     }
-    public void onDestroy(){
-            CloseComPort(serialCom);
+
+    public void onDestroy() {
+        CloseComPort(serialCom);
     }
 
     DispQueueThread DispQueue;//刷新显示线程
     SerialPortFinder mSerialPortFinder;//串口设备搜索
+
     //----------------------------------------------------串口控制类
     private class SerialControl extends SerialHelper {
         public SerialControl() {
@@ -366,6 +350,7 @@ public class DrugMainPresenter {
             DispQueue.AddQueue(ComRecData);// 线程定时刷新显示(推荐)
         }
     }
+
     /**
      * 关闭串口
      */
@@ -381,16 +366,18 @@ public class DrugMainPresenter {
         try {
             ComPort.open();
         } catch (SecurityException e) {
-            ShowMessage(drugMainActivity.get().getString(R.string.No_read_or_write_permissions));
+            ShowMessage(customActivity.get().getString(R.string.No_read_or_write_permissions));
         } catch (IOException e) {
-            ShowMessage(drugMainActivity.get().getString(R.string.Unknown_error));
+            ShowMessage(customActivity.get().getString(R.string.Unknown_error));
         } catch (InvalidParameterException e) {
-            ShowMessage(drugMainActivity.get().getString(R.string.Parameter_error));
+            ShowMessage(customActivity.get().getString(R.string.Parameter_error));
         }
     }
+
     //----------------------------------------------------刷新显示线程
     private class DispQueueThread extends Thread {
         private Queue<ComBean> QueueList = new LinkedList<ComBean>();
+
         @Override
         public void run() {
             super.run();
@@ -398,7 +385,7 @@ public class DrugMainPresenter {
                 final ComBean ComData;
                 while ((ComData = QueueList.poll()) != null) {
 
-                    drugMainActivity.get().runOnUiThread(new Runnable() {
+                    customActivity.get().runOnUiThread(new Runnable() {
                         public void run() {
                             DispRecData(ComData);
                         }
@@ -413,6 +400,7 @@ public class DrugMainPresenter {
                 }
             }
         }
+
         public synchronized void AddQueue(ComBean ComData) {
             QueueList.add(ComData);
         }
@@ -422,50 +410,50 @@ public class DrugMainPresenter {
     private void DispRecData(ComBean ComRecData) {
         StringBuilder sMsg = new StringBuilder();
         byte[] temp = new byte[20];
-        long cardint=0;
-        long wg26_1=0;
-        long wg26_2=0;
-        long wg34_1=0;
-        long wg34_2=0;
+        long cardint = 0;
+        long wg26_1 = 0;
+        long wg26_2 = 0;
+        long wg34_1 = 0;
+        long wg34_2 = 0;
         try {
-            sMsg.append("recv: "+ MyFunc.ByteArrToHex(ComRecData.bRec));
+            sMsg.append("recv: " + MyFunc.ByteArrToHex(ComRecData.bRec));
 
-            if(solveRecv(ComRecData.bRec, temp)==0){    //主动刷卡的数据处理
+            if (solveRecv(ComRecData.bRec, temp) == 0) {    //主动刷卡的数据处理
                 int len = temp[0];
                 byte[] cardnum = new byte[4];
-                System.arraycopy( temp,1, cardnum, 0, 4);   //只保留前面4个字节卡号
+                System.arraycopy(temp, 1, cardnum, 0, 4);   //只保留前面4个字节卡号
 
-                sMsg.append("\n原始卡号："+MyFunc.ByteArrToHex(cardnum)+"\n");
+                sMsg.append("\n原始卡号：" + MyFunc.ByteArrToHex(cardnum) + "\n");
 
                 cardint = Long.parseLong(MyFunc.ByteArrToHex(cardnum, 0, 4), 16);
-                sMsg.append("正码转十进制："+String.format("%010d", cardint)+"\n");
+                sMsg.append("正码转十进制：" + String.format("%010d", cardint) + "\n");
 
-                wg26_1 = Long.parseLong(MyFunc.ByteArrToHex(cardnum,1,1), 16);
-                wg26_2 = Long.parseLong(MyFunc.ByteArrToHex(cardnum,2,2), 16);
-                sMsg.append("正码转韦根26："+String.format("%03d,%05d", wg26_1, wg26_2)+"\n");
+                wg26_1 = Long.parseLong(MyFunc.ByteArrToHex(cardnum, 1, 1), 16);
+                wg26_2 = Long.parseLong(MyFunc.ByteArrToHex(cardnum, 2, 2), 16);
+                sMsg.append("正码转韦根26：" + String.format("%03d,%05d", wg26_1, wg26_2) + "\n");
 
-                wg34_1 = Long.parseLong(MyFunc.ByteArrToHex(cardnum,0,2), 16);
-                wg34_2 = Long.parseLong(MyFunc.ByteArrToHex(cardnum,2,2), 16);
-                sMsg.append("正码转韦根34："+String.format("%05d,%05d", wg34_1, wg34_2)+"\n");
+                wg34_1 = Long.parseLong(MyFunc.ByteArrToHex(cardnum, 0, 2), 16);
+                wg34_2 = Long.parseLong(MyFunc.ByteArrToHex(cardnum, 2, 2), 16);
+                sMsg.append("正码转韦根34：" + String.format("%05d,%05d", wg34_1, wg34_2) + "\n");
 
                 MyFunc.reverseByte(cardnum);
                 cardint = Long.parseLong(MyFunc.ByteArrToHex(cardnum, 0, 4), 16);
-                sMsg.append("反码转十进制："+String.format("%010d", cardint)+"\n");
+                sMsg.append("反码转十进制：" + String.format("%010d", cardint) + "\n");
 
-                wg26_1 = Long.parseLong(MyFunc.ByteArrToHex(cardnum,1,1), 16);
-                wg26_2 = Long.parseLong(MyFunc.ByteArrToHex(cardnum,2,2), 16);
-                sMsg.append("反码转韦根26："+String.format("%03d,%05d", wg26_1, wg26_2)+"\n");
+                wg26_1 = Long.parseLong(MyFunc.ByteArrToHex(cardnum, 1, 1), 16);
+                wg26_2 = Long.parseLong(MyFunc.ByteArrToHex(cardnum, 2, 2), 16);
+                sMsg.append("反码转韦根26：" + String.format("%03d,%05d", wg26_1, wg26_2) + "\n");
 
-                wg34_1 = Long.parseLong(MyFunc.ByteArrToHex(cardnum,0,2), 16);
-                wg34_2 = Long.parseLong(MyFunc.ByteArrToHex(cardnum,2,2), 16);
-                sMsg.append("反码转韦根34："+String.format("%05d,%05d", wg34_1, wg34_2)+"\n");
+                wg34_1 = Long.parseLong(MyFunc.ByteArrToHex(cardnum, 0, 2), 16);
+                wg34_2 = Long.parseLong(MyFunc.ByteArrToHex(cardnum, 2, 2), 16);
+                sMsg.append("反码转韦根34：" + String.format("%05d,%05d", wg34_1, wg34_2) + "\n");
 
             }
 
             ShowMessage(sMsg.toString());
 
         } catch (Exception ex) {
-            Log.d("lalala",ex.getMessage());
+            Log.d("lalala", ex.getMessage());
         }
     }
 
@@ -478,22 +466,22 @@ public class DrugMainPresenter {
         sbMsg.append("\r\n");
     /*    editTextRecDisp.setText(sbMsg);
         editTextRecDisp.setSelection(sbMsg.length(), sbMsg.length());*/
-        drugMainActivity.get().showTipsInfo(sbMsg.toString());
+        customActivity.get().showTipsInfo(sbMsg.toString());
     }
 
     //识别主动刷卡数据
     private int solveRecv(byte[] bRec, byte[] retRec) {
         int sta = -1;
 
-        if((byte)bRec[0] == 0x02){
+        if ((byte) bRec[0] == 0x02) {
 
             byte len = bRec[1];
-            if(len <= bRec.length){
+            if (len <= bRec.length) {
 
-                byte result = MyFunc.bccCalc(bRec, 1, len-3);
-                if((byte)bRec[len-2] == (byte)result){
-                    retRec[0] = (byte) (len-5);
-                    System.arraycopy( bRec,3,retRec, 1,len-5);
+                byte result = MyFunc.bccCalc(bRec, 1, len - 3);
+                if ((byte) bRec[len - 2] == (byte) result) {
+                    retRec[0] = (byte) (len - 5);
+                    System.arraycopy(bRec, 3, retRec, 1, len - 5);
                     sta = 0;
                 }
             }

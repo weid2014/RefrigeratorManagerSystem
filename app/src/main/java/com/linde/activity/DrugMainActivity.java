@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.linde.adapter.DrugAdapter;
 import com.linde.custom.CustomActivity;
 import com.linde.presenter.DrugMainPresenter;
+import com.linde.presenter.IDrugMainPresenter;
 import com.linde.refrigeratormanagementsystem.R;
 
 public class DrugMainActivity extends CustomActivity {
@@ -21,7 +22,7 @@ public class DrugMainActivity extends CustomActivity {
     private Button btnExit;
     private TextView tvUserNameMain;
 
-    private DrugMainPresenter drugMainPresenter;
+    private IDrugMainPresenter drugMainPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.linde.custom.CustomActivity;
 import com.linde.global.UserType;
+import com.linde.presenter.IMainPresenter;
 import com.linde.presenter.MainPresenter;
 import com.linde.refrigeratormanagementsystem.R;
 
@@ -33,7 +34,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
     private TextView btnInUser;
     private TextView btnNoAccess;
 
-    private MainPresenter mainPresenter;
+    private IMainPresenter mainPresenter;
 
     private NfcAdapter nfcAdapter;
     private PendingIntent pendingIntent;
