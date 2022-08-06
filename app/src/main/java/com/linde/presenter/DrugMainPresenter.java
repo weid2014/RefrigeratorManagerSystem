@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -18,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.linde.activity.DrugMainActivity;
 import com.linde.activity.MainActivity;
-import com.linde.adapter.DrugAdapter;
 import com.linde.adapter.OutDrugAdapter;
 import com.linde.bean.DrugBean;
 import com.linde.global.UserType;
@@ -26,7 +24,6 @@ import com.linde.refrigeratormanagementsystem.R;
 import com.linde.ui.MyDialog;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -126,7 +123,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
             contentView = LayoutInflater.from(customActivity.get()).inflate(R.layout.pup_tip, null);
             popupWindow = new PopupWindow(contentView, 600,
                     800, true);
-            popupWindow.setFocusable(false);
+            popupWindow.setFocusable(true);
             popupWindow.setOutsideTouchable(false);
             popupWindow.setClippingEnabled(false);
 
@@ -165,7 +162,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
             contentView = LayoutInflater.from(customActivity.get()).inflate(R.layout.pup_serial_port, null);
             popupWindow = new PopupWindow(contentView, 600,
                     800, true);
-            popupWindow.setFocusable(false);
+            popupWindow.setFocusable(true);
             popupWindow.setOutsideTouchable(false);
             popupWindow.setClippingEnabled(false);
 
@@ -213,6 +210,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
             @Override
             public void onClick(View view) {
                 //发送16进制的字符串
+                serialCom.sendHex(message);
                 tvResult.setText("发送16进制的字符串");
             }
         });
@@ -245,7 +243,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
             contentView = LayoutInflater.from(customActivity.get()).inflate(R.layout.pup_out_list, null);
             popupWindowOut = new PopupWindow(contentView, 600,
                     800, true);
-            popupWindowOut.setFocusable(false);
+            popupWindowOut.setFocusable(true);
             popupWindowOut.setOutsideTouchable(false);
             popupWindowOut.setClippingEnabled(false);
 

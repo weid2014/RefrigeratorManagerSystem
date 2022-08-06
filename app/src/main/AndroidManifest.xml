@@ -4,8 +4,10 @@
     package="com.linde.refrigeratormanagementsystem">
 
     <uses-permission android:name="android.permission.NFC" />
+    <!-- 仅在支持NFC的设备上运行 -->
+    <uses-feature android:name="android.hardware.nfc" android:required="true" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -17,16 +19,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RefrigeratorManagerSystem"
         tools:targetApi="31">
-
         <activity
-            android:name="com.linde.activity.SplashActivity"
+            android:name="com.linde.activity.SerialActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.linde.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!--通过NFC唤醒APP-->
+            <!-- 通过NFC唤醒APP -->
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
             </intent-filter>
@@ -37,9 +41,13 @@
             <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
             </intent-filter>
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
+
         </activity>
         <activity
-            android:name="com.linde.activity.MainActivity"
+            android:name="com.linde.activity.SplashActivity"
             android:exported="false" />
         <activity
             android:name="com.linde.activity.DrugMainActivity"
