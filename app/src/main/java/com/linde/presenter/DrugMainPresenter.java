@@ -1,6 +1,5 @@
 package com.linde.presenter;
 
-import android.content.Intent;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Gravity;
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.linde.activity.DrugMainActivity;
-import com.linde.activity.MainActivity;
 import com.linde.adapter.OutDrugAdapter;
 import com.linde.bean.DrugBean;
 import com.linde.global.UserType;
@@ -55,17 +53,22 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         DispQueue.start();
     }
 
+
+    public void setDrugBeanList(List<DrugBean> drugBeanList) {
+        this.drugBeanList = drugBeanList;
+    }
+
     private void initData() {
-        if (customActivity.get().getIntent() != null) {
-            userType = customActivity.get().getIntent().getStringExtra("UserType");
+        if (customActivity.getIntent() != null) {
+            userType = customActivity.getIntent().getStringExtra("UserType");
         }
         if (userType.equals(UserType.OutUser.toString())) {
-            userName = customActivity.get().getString(R.string.user_out);
+            userName = customActivity.getString(R.string.user_out);
         } else {
-            userName = customActivity.get().getString(R.string.user_in);
+            userName = customActivity.getString(R.string.user_in);
         }
 
-        drugBeanList = new ArrayList<>();
+        /*drugBeanList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]", "2538520", "2022-07-31 22:10:36", "2022-07-31 22:10:36", "txteFsds344jjdjjkiKPd233", 0);
             DrugBean drugBean1 = new DrugBean("新型冠状病毒[2022-nCoV]", "3321111", "2022-08-01 18:10:36", "2022-08-01 18:10:36", "aaaaaaaaaaaabbbbbbbbbccc", 1);
@@ -79,7 +82,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
             if (i % 3 == 0) {
                 drugBeanList.add(drugBean4);
             }
-        }
+        }*/
     }
 
     @Override
@@ -94,14 +97,15 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
 
     @Override
     public void showDiaLog() {
-        myDialog = new MyDialog(customActivity.get(), R.style.MyDialog);
+        myDialog = new MyDialog(customActivity, R.style.MyDialog);
         myDialog.setYesOnclickListener("确定", new MyDialog.onYesOnclickListener() {
             @Override
             public void onYesOnclick() {
                 //退出并锁定
                 setAlpha(1.0f);
-                showPopOut(userType);
                 myDialog.dismiss();
+                showPopOut(userType);
+
 
             }
         });
@@ -120,7 +124,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
     public void showPop() {
         View contentView = null;
         if (contentView == null) {
-            contentView = LayoutInflater.from(customActivity.get()).inflate(R.layout.pup_tip, null);
+            contentView = LayoutInflater.from(customActivity).inflate(R.layout.pup_tip, null);
             popupWindow = new PopupWindow(contentView, 600,
                     800, true);
             popupWindow.setFocusable(true);
@@ -144,7 +148,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
             }
         });
         //显示PopupWindow
-        View rootView = LayoutInflater.from(customActivity.get()).inflate(R.layout.activity_drug_main, null);
+        View rootView = LayoutInflater.from(customActivity).inflate(R.layout.activity_drug_main, null);
         popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
         setAlpha(0.2f);
         myCountDownTimer = new MyCountDownTimer(5000, 1000);
@@ -159,7 +163,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
 
         View contentView = null;
         if (contentView == null) {
-            contentView = LayoutInflater.from(customActivity.get()).inflate(R.layout.pup_serial_port, null);
+            contentView = LayoutInflater.from(customActivity).inflate(R.layout.pup_serial_port, null);
             popupWindow = new PopupWindow(contentView, 600,
                     800, true);
             popupWindow.setFocusable(true);
@@ -194,7 +198,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
                 serialCom.setBaudRate(port);
                 OpenComPort(serialCom);
 
-                customActivity.get().showTipsInfo("port" + port + "devicePath=" + devicePath);
+                customActivity.showTipsInfo("port" + port + "devicePath=" + devicePath);
                 tvResult.setText("port" + port + "devicePath=" + devicePath);
             }
         });
@@ -203,7 +207,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
             public void onClick(View view) {
                 //关闭串口
                 CloseComPort(serialCom);
-                customActivity.get().showTipsInfo("serialPortService.close()");
+                customActivity.showTipsInfo("serialPortService.close()");
             }
         });
         btnSend.setOnClickListener(new View.OnClickListener() {
@@ -226,7 +230,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
             }
         });
         //显示PopupWindow
-        View rootView = LayoutInflater.from(customActivity.get()).inflate(R.layout.activity_drug_main, null);
+        View rootView = LayoutInflater.from(customActivity).inflate(R.layout.activity_drug_main, null);
         popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
         setAlpha(0.2f);
     }
@@ -240,7 +244,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         }
         View contentView = null;
         if (contentView == null) {
-            contentView = LayoutInflater.from(customActivity.get()).inflate(R.layout.pup_out_list, null);
+            contentView = LayoutInflater.from(customActivity).inflate(R.layout.pup_out_list, null);
             popupWindowOut = new PopupWindow(contentView, 600,
                     800, true);
             popupWindowOut.setFocusable(true);
@@ -254,24 +258,28 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         tvUserName.setText(status == 0 ? "入库列表" : "出库列表");
 
         RecyclerView recyclerViewDrugOut = contentView.findViewById(R.id.recyclerViewDrugOut);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(customActivity.get());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(customActivity);
         recyclerViewDrugOut.setLayoutManager(layoutManager);
         HashSet<String> tempSet = new HashSet<>();
         List<List<DrugBean>> allOutList = new ArrayList<>();
-        for (DrugBean drugBean : drugBeanList) {
-            if (drugBean.getDrugStatus() == status) {
-                //wait wait wait
-                tempSet.add(drugBean.getDrugSN());
-            }
-        }
-        for (String s : tempSet) {
-            List<DrugBean> outDrugList = new ArrayList<>();
+        if (drugBeanList != null && drugBeanList.size() > 0) {
             for (DrugBean drugBean : drugBeanList) {
-                if (s.equals(drugBean.getDrugSN())) {
-                    outDrugList.add(drugBean);
+                if (drugBean.getDrugStatus() == status) {
+                    //wait wait wait
+                    tempSet.add(drugBean.getDrugSN());
                 }
             }
-            allOutList.add(outDrugList);
+            for (String s : tempSet) {
+                List<DrugBean> outDrugList = new ArrayList<>();
+                for (DrugBean drugBean : drugBeanList) {
+                    if (s.equals(drugBean.getDrugSN())) {
+                        outDrugList.add(drugBean);
+                    }
+                }
+                allOutList.add(outDrugList);
+            }
+        } else {
+            drugBeanList = new ArrayList<>();
         }
 
         OutDrugAdapter outDrugAdapter = new OutDrugAdapter(allOutList);
@@ -282,14 +290,12 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LogOut();
-                //取消定时器
                 myCountDownTimerOut.cancel();
-
+                LogOut();
             }
         });
         //显示PopupWindow
-        View rootView = LayoutInflater.from(customActivity.get()).inflate(R.layout.activity_drug_main, null);
+        View rootView = LayoutInflater.from(customActivity).inflate(R.layout.activity_drug_main, null);
         popupWindowOut.showAtLocation(rootView, Gravity.CENTER, 0, 0);
         setAlpha(0.2f);
         myCountDownTimerOut = new MyCountDownTimerOut(5000, 1000);
@@ -323,12 +329,14 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
 
 
     private void LogOut() {
+        if (popupWindowOut != null) {
+            popupWindowOut.dismiss();
+        }
         if (popupWindow != null) {
             popupWindow.dismiss();
-            setAlpha(1.0f);
-            customActivity.get().startActivity(new Intent(customActivity.get(), MainActivity.class));
-            customActivity.get().finish();
         }
+        setAlpha(1.0f);
+        customActivity.finish();
     }
 
     public void onDestroy() {
@@ -364,11 +372,11 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         try {
             ComPort.open();
         } catch (SecurityException e) {
-            ShowMessage(customActivity.get().getString(R.string.No_read_or_write_permissions));
+            ShowMessage(customActivity.getString(R.string.No_read_or_write_permissions));
         } catch (IOException e) {
-            ShowMessage(customActivity.get().getString(R.string.Unknown_error));
+            ShowMessage(customActivity.getString(R.string.Unknown_error));
         } catch (InvalidParameterException e) {
-            ShowMessage(customActivity.get().getString(R.string.Parameter_error));
+            ShowMessage(customActivity.getString(R.string.Parameter_error));
         }
     }
 
@@ -383,7 +391,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
                 final ComBean ComData;
                 while ((ComData = QueueList.poll()) != null) {
 
-                    customActivity.get().runOnUiThread(new Runnable() {
+                    customActivity.runOnUiThread(new Runnable() {
                         public void run() {
                             DispRecData(ComData);
                         }
@@ -464,7 +472,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         sbMsg.append("\r\n");
     /*    editTextRecDisp.setText(sbMsg);
         editTextRecDisp.setSelection(sbMsg.length(), sbMsg.length());*/
-        customActivity.get().showTipsInfo(sbMsg.toString());
+        customActivity.showTipsInfo(sbMsg.toString());
     }
 
     //识别主动刷卡数据

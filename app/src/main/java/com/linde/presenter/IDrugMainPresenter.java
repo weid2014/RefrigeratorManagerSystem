@@ -18,6 +18,7 @@ public interface IDrugMainPresenter {
     void showPopSerialPortTest();
 
     List<DrugBean> getDrugBeanList();
+    void setDrugBeanList(List<DrugBean> drugBeanList);
 
     String getUserName();
 }

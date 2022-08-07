@@ -23,7 +23,7 @@ public class MainPresenter extends PresenterBase implements IMainPresenter {
     public void showCanNotAccess() {
 
         if (popupWindow == null) {
-            View contentView = LayoutInflater.from(customActivity.get()).inflate(R.layout.pup_failt, null);
+            View contentView = LayoutInflater.from(customActivity).inflate(R.layout.pup_failt, null);
             popupWindow = new PopupWindow(contentView, 600,
                     800, true);
             popupWindow.setFocusable(false);
@@ -33,7 +33,7 @@ public class MainPresenter extends PresenterBase implements IMainPresenter {
         }
 
         //显示PopupWindow
-        View rootView = LayoutInflater.from(customActivity.get()).inflate(R.layout.activity_main, null);
+        View rootView = LayoutInflater.from(customActivity).inflate(R.layout.activity_main, null);
         popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
         setAlpha(0.2f);
         myCountDownTimer = new MyCountDownTimer(5000, 1000);

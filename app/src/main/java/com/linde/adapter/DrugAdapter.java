@@ -21,6 +21,10 @@ public class DrugAdapter extends RecyclerView.Adapter<DrugAdapter.ViewHolder> {
         this.drugBeanList = drugBeanList;
     }
 
+    public void setDrugBeanList(List<DrugBean> drugBeanList) {
+        this.drugBeanList = drugBeanList;
+    }
+
     /**
      * onCreateViewHolder() 方法是用于创建ViewHolder 实例的，
      * 我们在这个方法中将item_Fruit 布局加载进来， 然后创建一个ViewHolder 实例，

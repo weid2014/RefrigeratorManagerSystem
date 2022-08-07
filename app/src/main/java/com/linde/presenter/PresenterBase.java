@@ -11,19 +11,19 @@ import com.linde.custom.CustomActivity;
 import java.lang.ref.WeakReference;
 
 public abstract class PresenterBase {
-    protected WeakReference<CustomActivity> customActivity=null;
+    protected CustomActivity customActivity=null;
 
     protected PopupWindow popupWindow;
     protected MyCountDownTimer myCountDownTimer;
 
     protected PresenterBase(CustomActivity activity){
-        this.customActivity=new WeakReference<>(activity);
+        this.customActivity=activity;
     }
 
     protected void setAlpha(float f) {
-        WindowManager.LayoutParams attributes = customActivity.get().getWindow().getAttributes();
+        WindowManager.LayoutParams attributes = customActivity.getWindow().getAttributes();
         attributes.alpha = f;
-        customActivity.get().getWindow().setAttributes(attributes);
+        customActivity.getWindow().setAttributes(attributes);
     }
 
     /**
