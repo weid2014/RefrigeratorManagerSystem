@@ -36,7 +36,7 @@ public class DrugMainActivity extends CustomActivity {
 
     private IDrugMainPresenter drugMainPresenter;
 
-    private String rfidPort = "/dev/ttyUSB1";
+    private String rfidPort = "/dev/ttyUSB";
     private int rfidBaudRate = 19200;
     private Handler mHandler;
     private static final int MSG_UPDATE_LISTVIEW = 0;
@@ -60,7 +60,8 @@ public class DrugMainActivity extends CustomActivity {
         setContentView(R.layout.activity_drug_main);
         drugMainPresenter = new DrugMainPresenter(this);
         initView();
-        connect232();
+        connectCount = 0;
+        connect232(connectCount);
 
         mHandler = new Handler() {
 
@@ -167,9 +168,16 @@ public class DrugMainActivity extends CustomActivity {
     }
 
 
-    private void connect232() {
+    private int connectCount = 0;
+
+    private void connect232(int count) {
         try {
             int result = 0x30;
+            rfidPort = "/dev/ttyUSB" + count;
+            Toast.makeText(
+                    getApplicationContext(),
+                    "开始连接232，地址:" + rfidPort + "---波特率:" + rfidBaudRate,
+                    Toast.LENGTH_SHORT).show();
             result = HfData.reader.OpenReader(rfidBaudRate, rfidPort, 0, 1, null);
 
             if (result == 0) {
@@ -191,13 +199,28 @@ public class DrugMainActivity extends CustomActivity {
                         getApplicationContext(),
                         "连接失败",
                         Toast.LENGTH_SHORT).show();
+                continueConnect(count);
             }
         } catch (Exception e) {
             Toast.makeText(
                     getApplicationContext(),
                     "连接失败",
                     Toast.LENGTH_SHORT).show();
+            continueConnect(count);
         }
+    }
+    //失败之后重新连接
+    private void continueConnect(int count) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        count++;
+        if (count > 3) {
+            return;
+        }
+        connect232(count);
     }
 
     private void AddAntenna(int antenna) {

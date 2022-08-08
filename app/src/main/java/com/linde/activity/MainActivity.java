@@ -102,6 +102,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
         switch (view.getId()) {
             case R.id.imageLock:
                 changeUI();
+                jumpToIdentity(UserType.OutUser);
                 break;
             case R.id.btnOutUser:
                 changeUI();
