@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.linde.adapter.DrugAdapter;
 import com.linde.bean.DrugBean;
 import com.linde.custom.CustomActivity;
+import com.linde.global.GlobalData;
 import com.linde.presenter.DrugMainPresenter;
 import com.linde.presenter.IDrugMainPresenter;
 import com.linde.refrigeratormanagementsystem.R;
@@ -61,7 +62,11 @@ public class DrugMainActivity extends CustomActivity {
         drugMainPresenter = new DrugMainPresenter(this);
         initView();
         connectCount = 0;
-        connect232(connectCount);
+        if(GlobalData.debugger){
+            //调试模式
+        }else {
+            connect232(connectCount);
+        }
 
         mHandler = new Handler() {
 

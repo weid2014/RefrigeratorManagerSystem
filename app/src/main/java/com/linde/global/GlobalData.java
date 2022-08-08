@@ -1,5 +1,6 @@
 package com.linde.global;
 
 public class GlobalData {
-    public static int type=0;
+    //全局变量，本地调试开关
+    public static boolean debugger=true;
 }

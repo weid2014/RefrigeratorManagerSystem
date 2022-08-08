@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.linde.custom.CustomActivity;
+import com.linde.global.GlobalData;
 import com.linde.global.UserType;
 import com.linde.presenter.IMainPresenter;
 import com.linde.presenter.MainPresenter;
@@ -44,16 +45,25 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
     SerialControl serialCom3;//串口
     SerialControl serialCom4;//串口
 
+    private String openHex = "AA55010D";
+    private String lockHex = "AA55020D";
+    private long currentTime = 0L;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
         init();
-        DispQueue = new DispQueueThread();
-        DispQueue.start();
-        initSerialtty3();
-        initSerialtty4();
+        if (GlobalData.debugger) {
+            ableClick();
+        } else {
+            disableClick();
+            DispQueue = new DispQueueThread();
+            DispQueue.start();
+            initSerialtty3();
+            initSerialtty4();
+        }
     }
 
     private void initSerialtty3() {
@@ -118,6 +128,20 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
         }
     }
 
+    private void disableClick() {
+        imageLock.setEnabled(false);
+        imageLock.setEnabled(false);
+        imageLock.setEnabled(false);
+        imageLock.setEnabled(false);
+    }
+
+    private void ableClick() {
+        imageLock.setEnabled(true);
+        imageLock.setEnabled(true);
+        imageLock.setEnabled(true);
+        imageLock.setEnabled(true);
+    }
+
     private void changeUI() {
         if (!isLocked) {
             imageLock.setBackgroundResource(R.mipmap.icon_nolock);
@@ -135,26 +159,39 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
     }
 
 
-
     private void jumpToIdentity(UserType type) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(MainActivity.this, DrugMainActivity.class);
-                intent.putExtra("UserType", type.toString());
-                startActivityForResult(intent,998);
-            }
-        }, 2000);
+        disableClick();
+        if (currentTime == 0 || System.currentTimeMillis() - currentTime > 2000) {
+            //如果第一次进入方法，或者进入方法的时间大于2秒，则进入主页面
+            currentTime = System.currentTimeMillis();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(MainActivity.this, DrugMainActivity.class);
+                    intent.putExtra("UserType", type.toString());
+                    startActivityForResult(intent, 998);
+                }
+            }, 1500);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==998){
+        if (requestCode == 998) {
             //关锁
-            serialCom4.sendHex("AA55020D");
-            isLocked=true;
+            sendLockHexByStatus(false);
+            isLocked = true;
             changeUI();
+            ableClick();
+        }
+    }
+
+    //开关锁
+    private void sendLockHexByStatus(boolean status) {
+        String sendHex = status ? openHex : lockHex;
+        if (serialCom4 != null) {
+            serialCom4.sendHex(sendHex);
         }
     }
 
@@ -292,17 +329,16 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
 //        sbMsg.append(m_sdfDate.format(new Date()));
         sbMsg.append(sMsg);
         sbMsg.append("\r\n");
-    /*    editTextRecDisp.setText(sbMsg);
-        editTextRecDisp.setSelection(sbMsg.length(), sbMsg.length());*/
         showTipsInfo(sbMsg.toString());
         //使用我的手机NFC，读取到信息就开锁
-        if(isLocked&&(sbMsg.toString().contains("F4")||sbMsg.toString().contains("FE")||sbMsg.toString().contains("FF"))){
-            serialCom4.sendHex("AA55010D");
-            isLocked=false;
+        if (isLocked && (sbMsg.toString().contains("F4") || sbMsg.toString().contains("FE") || sbMsg.toString().contains("FF"))) {
+            isLocked = false;
+            sendLockHexByStatus(true);
             changeUI();
             jumpToIdentity(UserType.OutUser);
         }
     }
+
 
     //识别主动刷卡数据
     private int solveRecv(byte[] bRec, byte[] retRec) {
