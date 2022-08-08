@@ -1,9 +1,11 @@
 package com.linde.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +18,7 @@ import com.linde.global.UserType;
 import com.linde.presenter.IMainPresenter;
 import com.linde.presenter.MainPresenter;
 import com.linde.refrigeratormanagementsystem.R;
+import com.linde.ui.MyDialog;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
@@ -196,7 +199,35 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            //提示是否退出软件
+            MyDialog myDialog = new MyDialog(this, R.style.MyDialog);
+            myDialog.setMessage("是否退出软件?");
+            myDialog.setYesOnclickListener("确定", new MyDialog.onYesOnclickListener() {
+                @Override
+                public void onYesOnclick() {
+                    //退出并锁定
+                    sendLockHexByStatus(false);
+                    finish();
+                    myDialog.dismiss();
+                }
+            });
+            myDialog.setNoOnclickListener("取消", new MyDialog.onNoOnclickListener() {
+                @Override
+                public void onNoClick() {
+                    myDialog.dismiss();
+                }
+            });
+            myDialog.show();
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     protected void onDestroy() {
+
         CloseComPort(serialCom3);
         CloseComPort(serialCom4);
         super.onDestroy();
@@ -360,4 +391,5 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
 
         return sta;
     }
+
 }

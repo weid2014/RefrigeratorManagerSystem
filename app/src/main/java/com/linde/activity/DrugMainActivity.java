@@ -39,7 +39,7 @@ public class DrugMainActivity extends CustomActivity {
 
     private String rfidPort = "/dev/ttyUSB";
     private int rfidBaudRate = 19200;
-    private Handler mHandler;
+
     private static final int MSG_UPDATE_LISTVIEW = 0;
     private static final int MSG_UPDATE_INFO = 1;
     long ScanTime = 0;
@@ -54,7 +54,54 @@ public class DrugMainActivity extends CustomActivity {
     private List<DrugBean> drugOldInBeanList = null;
     private List<DrugBean> drugInBeanList = null;
     private List<DrugBean> drugOutBeanList = null;
+    private Handler mHandler= new Handler() {
 
+        @Override
+        public void handleMessage(Message msg) {
+            // TODO Auto-generated method stub
+            //if(isCanceled) return;
+            switch (msg.what) {
+                case MSG_UPDATE_LISTVIEW:
+                    currentTime = System.currentTimeMillis();
+                    drugBeanList = new ArrayList<>();
+                    for (HashMap<String, String> stringStringHashMap : mCurIvtClist) {
+                        String tagRssi = stringStringHashMap.get("tagRssi");
+                        String tagAnt = stringStringHashMap.get("tagAnt");
+                        String tagUid = stringStringHashMap.get("tagUid");
+                        DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, "2022-07-31 22:10:36", "2022-07-31 22:10:36", tagUid, 0);
+                        drugBeanList.add(drugBean);
+                    }
+
+//                        drugAdapter = new DrugAdapter(drugBeanList);
+//                        recyclerViewDrug.setAdapter(drugAdapter);
+                    drugAdapter.setDrugBeanList(drugBeanList);
+                    drugAdapter.notifyDataSetChanged();
+                    Toast.makeText(DrugMainActivity.this, "总数=" + Number + "个", Toast.LENGTH_SHORT).show();
+                    if (isFirstIn) {
+                        drugOldInBeanList = drugBeanList;
+                    } else {
+                        drugOutBeanList = new ArrayList<>();
+                        for (DrugBean drugBean : drugBeanList) {
+                            //进来时候的数据跟退出时候的数据对比，
+                            if (!drugOldInBeanList.contains(drugBean)) {
+                                drugOutBeanList.add(drugBean);
+                                drugBean.setDrugStatus(1);
+                            }
+                        }
+                        drugAdapter.setDrugBeanList(drugBeanList);
+                        drugAdapter.notifyDataSetChanged();
+                        drugMainPresenter.showDiaLog();
+                    }
+                    break;
+                case MSG_UPDATE_INFO:
+                    break;
+                default:
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,60 +109,21 @@ public class DrugMainActivity extends CustomActivity {
         drugMainPresenter = new DrugMainPresenter(this);
         initView();
         connectCount = 0;
+
         if(GlobalData.debugger){
             //调试模式
+            mCurIvtClist=new ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+                HashMap<String, String> stringStringHashMap=new HashMap<>();
+                stringStringHashMap.put("tagRssi",i+"");
+                stringStringHashMap.put("tagAnt",i+"");
+                stringStringHashMap.put("tagUid","adrfdsfdsfdsfsdfdsfdsfdsffdsfs"+i);
+                mCurIvtClist.add(stringStringHashMap);
+            }
+            mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
         }else {
             connect232(connectCount);
         }
-
-        mHandler = new Handler() {
-
-            @Override
-            public void handleMessage(Message msg) {
-                // TODO Auto-generated method stub
-                //if(isCanceled) return;
-                switch (msg.what) {
-                    case MSG_UPDATE_LISTVIEW:
-                        currentTime = System.currentTimeMillis();
-                        drugBeanList = new ArrayList<>();
-                        for (HashMap<String, String> stringStringHashMap : mCurIvtClist) {
-                            String tagRssi = stringStringHashMap.get("tagRssi");
-                            String tagAnt = stringStringHashMap.get("tagAnt");
-                            String tagUid = stringStringHashMap.get("tagUid");
-                            DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, "2022-07-31 22:10:36", "2022-07-31 22:10:36", tagUid, 0);
-                            drugBeanList.add(drugBean);
-                        }
-
-//                        drugAdapter = new DrugAdapter(drugBeanList);
-//                        recyclerViewDrug.setAdapter(drugAdapter);
-                        drugAdapter.setDrugBeanList(drugBeanList);
-                        drugAdapter.notifyDataSetChanged();
-                        Toast.makeText(DrugMainActivity.this, "总数=" + Number + "个", Toast.LENGTH_SHORT).show();
-                        if (isFirstIn) {
-                            drugOldInBeanList = drugBeanList;
-                        } else {
-                            drugOutBeanList = new ArrayList<>();
-                            for (DrugBean drugBean : drugBeanList) {
-                                //进来时候的数据跟退出时候的数据对比，
-                                if (!drugOldInBeanList.contains(drugBean)) {
-                                    drugOutBeanList.add(drugBean);
-                                    drugBean.setDrugStatus(1);
-                                }
-                            }
-                            drugAdapter.setDrugBeanList(drugBeanList);
-                            drugAdapter.notifyDataSetChanged();
-                            drugMainPresenter.showDiaLog();
-                        }
-                        break;
-                    case MSG_UPDATE_INFO:
-                        break;
-                    default:
-                        break;
-                }
-                super.handleMessage(msg);
-            }
-
-        };
     }
 
 
@@ -162,14 +170,18 @@ public class DrugMainActivity extends CustomActivity {
     protected void onDestroy() {
         onActivityDestroy();
         setResult(RESULT_OK, new Intent());
-        super.onDestroy();
         finish();
+        drugMainPresenter=null;
+        super.onDestroy();
     }
 
     private void onActivityDestroy() {
 
         isScan = false;
         HfData.reader.CloseReader();
+        if(mThread!=null){
+            mThread=null;
+        }
     }
 
 
@@ -313,9 +325,9 @@ public class DrugMainActivity extends CustomActivity {
                         mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
                         //doTimeWork();
                         isScan = false;
-                        mThread = null;
+//                        mThread = null;
                     }
-
+//                    mThread = null;
                 } catch (Exception ex) {
                     mThread = null;
                 }
