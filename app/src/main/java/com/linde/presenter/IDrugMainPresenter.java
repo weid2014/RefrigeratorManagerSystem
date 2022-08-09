@@ -21,4 +21,5 @@ public interface IDrugMainPresenter {
     void setDrugBeanList(List<DrugBean> drugBeanList);
 
     String getUserName();
+    void setUserName(String userName);
 }

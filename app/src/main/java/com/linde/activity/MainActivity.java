@@ -60,7 +60,9 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
         init();
         if (GlobalData.debugger) {
             ableClick();
+            findViewById(R.id.layoutDebugger).setVisibility(View.VISIBLE);
         } else {
+            findViewById(R.id.layoutDebugger).setVisibility(View.GONE);
             disableClick();
             DispQueue = new DispQueueThread();
             DispQueue.start();
@@ -133,16 +135,16 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
 
     private void disableClick() {
         imageLock.setEnabled(false);
-        imageLock.setEnabled(false);
-        imageLock.setEnabled(false);
+        btnOutUser.setEnabled(false);
+        btnInUser.setEnabled(false);
         imageLock.setEnabled(false);
     }
 
     private void ableClick() {
         imageLock.setEnabled(true);
-        imageLock.setEnabled(true);
-        imageLock.setEnabled(true);
-        imageLock.setEnabled(true);
+        btnOutUser.setEnabled(true);
+        btnInUser.setEnabled(true);
+        btnNoAccess.setEnabled(true);
     }
 
     private void changeUI() {

@@ -58,6 +58,10 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         this.drugBeanList = drugBeanList;
     }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     private void initData() {
         if (customActivity.getIntent() != null) {
             userType = customActivity.getIntent().getStringExtra("UserType");
@@ -67,22 +71,6 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         } else {
             userName = customActivity.getString(R.string.user_in);
         }
-
-        /*drugBeanList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]", "2538520", "2022-07-31 22:10:36", "2022-07-31 22:10:36", "txteFsds344jjdjjkiKPd233", 0);
-            DrugBean drugBean1 = new DrugBean("新型冠状病毒[2022-nCoV]", "3321111", "2022-08-01 18:10:36", "2022-08-01 18:10:36", "aaaaaaaaaaaabbbbbbbbbccc", 1);
-            DrugBean drugBean2 = new DrugBean("新型冠状病毒[2021-nCoV]", "3321112", "2022-08-01 18:10:36", "2022-08-01 18:10:36", "aaaaaaaaaaaabbbbbbbbbcdd", 1);
-            DrugBean drugBean4 = new DrugBean("新型冠状病毒[2019-nCoV]", "2538521", "2022-07-31 22:10:36", "2022-07-31 22:10:36", "txteFsds344jjdjjkiKPd666", 0);
-            drugBeanList.add(drugBean);
-            drugBeanList.add(drugBean1);
-            if (i % 2 == 0) {
-                drugBeanList.add(drugBean2);
-            }
-            if (i % 3 == 0) {
-                drugBeanList.add(drugBean4);
-            }
-        }*/
     }
 
     @Override
@@ -102,11 +90,10 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
             @Override
             public void onYesOnclick() {
                 //退出并锁定
+                Log.d("lalala","退出并锁定");
                 setAlpha(1.0f);
                 myDialog.dismiss();
-                showPopOut(userType);
-
-
+                showPopOut();
             }
         });
         myDialog.setNoOnclickListener("取消", new MyDialog.onNoOnclickListener() {
@@ -235,9 +222,9 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         setAlpha(0.2f);
     }
 
-    private void showPopOut(String userType) {
+    private void showPopOut() {
         int status = 0;
-        if (userType.equals(UserType.OutUser.toString())) {
+        if (userName.equals("出库员")) {
             status = 1;
         } else {
             status = 0;
@@ -262,12 +249,13 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         recyclerViewDrugOut.setLayoutManager(layoutManager);
         HashSet<String> tempSet = new HashSet<>();
         List<List<DrugBean>> allOutList = new ArrayList<>();
+        Log.d("lalala","allOutList====="+allOutList.size());
         if (drugBeanList != null && drugBeanList.size() > 0) {
             for (DrugBean drugBean : drugBeanList) {
-                if (drugBean.getDrugStatus() == status) {
+//                if (drugBean.getDrugStatus() == status) {
                     //wait wait wait
                     tempSet.add(drugBean.getDrugSN());
-                }
+//                }
             }
             for (String s : tempSet) {
                 List<DrugBean> outDrugList = new ArrayList<>();
@@ -281,7 +269,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         } else {
             drugBeanList = new ArrayList<>();
         }
-
+        Log.d("lalala","drugBeanList====="+drugBeanList.size());
         OutDrugAdapter outDrugAdapter = new OutDrugAdapter(allOutList);
         recyclerViewDrugOut.setAdapter(outDrugAdapter);
 

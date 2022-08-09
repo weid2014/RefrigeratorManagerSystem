@@ -21,6 +21,10 @@ public class OutDrugAdapter extends RecyclerView.Adapter<OutDrugAdapter.ViewHold
     public OutDrugAdapter(List<List<DrugBean>> allDrugBeanList){
         this.allDrugBeanList=allDrugBeanList;
     }
+    public void setDrugBeanList(List<List<DrugBean>> allDrugBeanList) {
+        this.allDrugBeanList = allDrugBeanList;
+    }
+
 
     /**
      * onCreateViewHolder() 方法是用于创建ViewHolder 实例的，
