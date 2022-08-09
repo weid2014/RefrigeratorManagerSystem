@@ -73,7 +73,7 @@ public class DrugBean {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DrugBean drugBean = (DrugBean) o;
-        return drugStatus == drugBean.drugStatus && Objects.equals(drugName, drugBean.drugName) && Objects.equals(drugNo, drugBean.drugNo) && Objects.equals(wareHousingTime, drugBean.wareHousingTime) && Objects.equals(outHousingTime, drugBean.outHousingTime) && Objects.equals(drugSN, drugBean.drugSN);
+        return Objects.equals(drugSN, drugBean.drugSN);
     }
 
     @Override

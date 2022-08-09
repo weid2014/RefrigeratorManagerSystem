@@ -24,7 +24,9 @@ import com.linde.refrigeratormanagementsystem.R;
 import com.linde.rfid.HfData;
 import com.linde.rfid.InventoryTagMap;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -62,49 +64,55 @@ public class DrugMainActivity extends CustomActivity {
             switch (msg.what) {
                 case MSG_UPDATE_LISTVIEW:
                     drugBeanList = new ArrayList<>();
+                    Date date = new Date();
+
+                    long times = date.getTime();
+                    //时间戳
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String dateString = formatter.format(date);
                     for (HashMap<String, String> stringStringHashMap : mFirstCurIvtClist) {
                         String tagRssi = stringStringHashMap.get("tagRssi");
                         String tagAnt = stringStringHashMap.get("tagAnt");
                         String tagUid = stringStringHashMap.get("tagUid");
-                        DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, "2022-07-31 22:10:36", "2022-07-31 22:10:36", tagUid, 0);
+                        DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, dateString, dateString, tagUid, 0);
                         drugBeanList.add(drugBean);
                     }
                     drugAdapter.setDrugBeanList(drugBeanList);
                     drugAdapter.notifyDataSetChanged();
-                    Log.d("lalala","drugBeanList"+drugBeanList.size());
+                    Log.d("lalala", "drugBeanList" + drugBeanList.size());
                     Toast.makeText(DrugMainActivity.this, "总数=" + Number + "个", Toast.LENGTH_SHORT).show();
-                    if(isLockAndExit){
-                        drugInBeanList=new ArrayList<>();
-                        drugOutBeanList=new ArrayList<>();
+                    if (isLockAndExit) {
+                        drugInBeanList = new ArrayList<>();
+                        drugOutBeanList = new ArrayList<>();
 
                         for (HashMap<String, String> stringStringHashMap : mExitCurIvtClist) {
                             String tagRssi = stringStringHashMap.get("tagRssi");
                             String tagAnt = stringStringHashMap.get("tagAnt");
                             String tagUid = stringStringHashMap.get("tagUid");
-                            DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, "2022-07-31 22:10:36", "2022-07-31 22:10:36", tagUid, 0);
+                            DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, dateString, dateString, tagUid, 0);
                             drugInBeanList.add(drugBean);
                         }
-                        Log.d("lalala","drugInBeanList"+drugInBeanList.size());
-                        if(mExitCurIvtClist.size()>mFirstCurIvtClist.size()){
+                        Log.d("lalala", "drugInBeanList" + drugInBeanList.size());
+                        if (mExitCurIvtClist.size() > mFirstCurIvtClist.size()) {
                             drugMainPresenter.setUserName("入库员");
-                            Log.d("lalala","入库员");
+                            Log.d("lalala", "入库员");
                             //判断出库入库
                             for (DrugBean drugBean : drugInBeanList) {
-                                if(!drugBeanList.contains(drugBean)){
+                                if (!drugBeanList.contains(drugBean)) {
                                     drugOutBeanList.add(drugBean);
                                 }
                             }
-                        }else {
+                        } else {
                             drugMainPresenter.setUserName("出库员");
-                            Log.d("lalala","出库员");
+                            Log.d("lalala", "出库员");
                             for (DrugBean drugBean : drugBeanList) {
-                                if(!drugInBeanList.contains(drugBean)){
+                                if (!drugInBeanList.contains(drugBean)) {
                                     drugOutBeanList.add(drugBean);
                                 }
                             }
                         }
                         drugMainPresenter.setDrugBeanList(drugOutBeanList);
-                        Log.d("lalala","drugOutBeanList"+drugOutBeanList.size());
+                        Log.d("lalala", "drugOutBeanList" + drugOutBeanList.size());
                     }
                     break;
                 case MSG_UPDATE_INFO:
@@ -138,9 +146,9 @@ public class DrugMainActivity extends CustomActivity {
                 HashMap<String, String> stringStringHashMap = new HashMap<>();
                 stringStringHashMap.put("tagRssi", i + "");
                 stringStringHashMap.put("tagAnt", i + "");
-                stringStringHashMap.put("tagUid", "adrfdsfdsfdsfsdfdsfdsfdsffdsfs" + i);
+                stringStringHashMap.put("tagUid", "dsa3234sfadf43545435435" + i);
                 mFirstCurIvtClist.add(stringStringHashMap);
-                if(i<8){
+                if (i < 8) {
                     mExitCurIvtClist.add(stringStringHashMap);
                 }
             }
@@ -152,7 +160,7 @@ public class DrugMainActivity extends CustomActivity {
 
 
     private void initView() {
-        isLockAndExit=false;
+        isLockAndExit = false;
         drugBeanList = new ArrayList<>();
         recyclerViewDrug = findViewById(R.id.recyclerViewDrug);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -165,10 +173,10 @@ public class DrugMainActivity extends CustomActivity {
             public void onClick(View view) {
                 //退出按键,弹出dialog
                 isLockAndExit = true;
-                if(!GlobalData.debugger){
+                if (!GlobalData.debugger) {
                     getRfidData();
                 }
-                Log.d("lalala","退出按键,弹出dialog");
+                Log.d("lalala", "退出按键,弹出dialog");
                 mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
                 drugMainPresenter.showDiaLog();
             }

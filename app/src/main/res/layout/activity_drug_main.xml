@@ -7,11 +7,25 @@
     tools:context="com.linde.activity.DrugMainActivity">
 
     <LinearLayout
+        android:paddingTop="20dp"
+        android:background="@color/bg_color"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <TextView
+            android:textColor="@color/white"
+            android:text="JINGHE"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="0.5dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.2"
+        android:layout_weight="1"
         android:background="@color/bg_color"
-        android:paddingTop="20dp">
+        >
 
         <TextView
             android:layout_width="0dp"
@@ -50,7 +64,7 @@
         android:id="@+id/recyclerViewDrug"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="12" />
+        android:layout_weight="10" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -65,7 +79,8 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="center_vertical"
-            android:padding="4dp"
+            android:padding="12dp"
+
             android:text="用户名"
             android:textColor="@color/white"
             android:textSize="19sp" />
