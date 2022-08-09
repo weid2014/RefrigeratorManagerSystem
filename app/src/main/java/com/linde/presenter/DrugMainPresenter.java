@@ -118,6 +118,16 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
             popupWindow.setOutsideTouchable(false);
             popupWindow.setClippingEnabled(false);
 
+            //消失监听听
+            popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    setAlpha(1.0f);
+                    //取消定时器
+                    myCountDownTimer.cancel();
+                }
+            });
+
         } else {
             contentView = popupWindow.getContentView();
         }
@@ -125,13 +135,11 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         tvUserName.setText("你好，" + userName);
         tvCountDownTime = contentView.findViewById(R.id.tvCountDownTime);
         ImageButton btnClose = contentView.findViewById(R.id.btnClose);
+
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 popupWindow.dismiss();
-                setAlpha(1.0f);
-                //取消定时器
-                myCountDownTimer.cancel();
             }
         });
         //显示PopupWindow
@@ -156,7 +164,6 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
             popupWindow.setFocusable(true);
             popupWindow.setOutsideTouchable(false);
             popupWindow.setClippingEnabled(false);
-
         } else {
             contentView = popupWindow.getContentView();
         }
@@ -237,6 +244,13 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
             popupWindowOut.setFocusable(true);
             popupWindowOut.setOutsideTouchable(false);
             popupWindowOut.setClippingEnabled(false);
+            popupWindowOut.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    myCountDownTimerOut.cancel();
+                    LogOut();
+                }
+            });
 
         } else {
             contentView = popupWindowOut.getContentView();
@@ -278,8 +292,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                myCountDownTimerOut.cancel();
-                LogOut();
+                popupWindowOut.dismiss();
             }
         });
         //显示PopupWindow
@@ -412,7 +425,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         try {
             sMsg.append("recv: " + MyFunc.ByteArrToHex(ComRecData.bRec));
 
-            if (solveRecv(ComRecData.bRec, temp) == 0) {    //主动刷卡的数据处理
+            if (solveReceive(ComRecData.bRec, temp) == 0) {    //主动刷卡的数据处理
                 int len = temp[0];
                 byte[] cardnum = new byte[4];
                 System.arraycopy(temp, 1, cardnum, 0, 4);   //只保留前面4个字节卡号
@@ -464,7 +477,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
     }
 
     //识别主动刷卡数据
-    private int solveRecv(byte[] bRec, byte[] retRec) {
+    private int solveReceive(byte[] bRec, byte[] retRec) {
         int sta = -1;
 
         if ((byte) bRec[0] == 0x02) {
