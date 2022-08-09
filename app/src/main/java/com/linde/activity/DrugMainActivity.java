@@ -175,10 +175,11 @@ public class DrugMainActivity extends CustomActivity {
                 isLockAndExit = true;
                 if (!GlobalData.debugger) {
                     getRfidData();
+                }else {
+                    Log.d("lalala", "退出按键,弹出dialog");
+                    mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
+                    drugMainPresenter.showDiaLog();
                 }
-                Log.d("lalala", "退出按键,弹出dialog");
-                mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
-                drugMainPresenter.showDiaLog();
             }
         });
         TextView tvUserNameMain = findViewById(R.id.tvUserNameMain);
@@ -354,6 +355,7 @@ public class DrugMainActivity extends CustomActivity {
                         Number = mCurIvtClist.size();
                         if (isLockAndExit) {
                             mExitCurIvtClist = mCurIvtClist;
+                            drugMainPresenter.showDiaLog();
                         } else {
                             mFirstCurIvtClist = mCurIvtClist;
                         }
