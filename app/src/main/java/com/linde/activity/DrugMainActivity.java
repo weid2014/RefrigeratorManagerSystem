@@ -41,6 +41,7 @@ public class DrugMainActivity extends CustomActivity {
     private TextView tvUserNameMain;
     private static final int MSG_UPDATE_LISTVIEW = 0;
     private static final int MSG_UPDATE_INFO = 1;
+    private static final int MSG_UPDATE_FAIL = 2;
     private long Number = 0;
     private Thread mThread;
     private int Count = 0;
@@ -55,6 +56,8 @@ public class DrugMainActivity extends CustomActivity {
     private List<DrugBean> drugBeanList = null;
     private List<DrugBean> drugInBeanList = null;
     private List<DrugBean> drugOutBeanList = null;
+
+    private LoadingDialog scanloadingDialog;
     private Handler mHandler = new Handler() {
 
         @Override
@@ -63,6 +66,7 @@ public class DrugMainActivity extends CustomActivity {
             //if(isCanceled) return;
             switch (msg.what) {
                 case MSG_UPDATE_LISTVIEW:
+                    scanloadingDialog.loadSuccess();
                     Toast.makeText(DrugMainActivity.this, "总数=" + Number + "个", Toast.LENGTH_SHORT).show();
                     if (isLockAndExit) {
                         drugInBeanList = new ArrayList<>();
@@ -131,6 +135,9 @@ public class DrugMainActivity extends CustomActivity {
                     drugAdapter.notifyDataSetChanged();
                     Log.d("lalala", "MSG_UPDATE_INFO drugBeanList" + drugBeanList.size());
                     break;
+
+                case MSG_UPDATE_FAIL:
+                    scanloadingDialog.loadFailed();
                 default:
                     break;
             }
@@ -164,23 +171,42 @@ public class DrugMainActivity extends CustomActivity {
         mFirstCurIvtClist = new ArrayList<HashMap<String, String>>();
         mExitCurIvtClist = new ArrayList<HashMap<String, String>>();
         if (GlobalData.debugger) {
-            //调试模式
-            mCurIvtClist = new ArrayList<>();
-            for (int i = 0; i < 10; i++) {
-                HashMap<String, String> stringStringHashMap = new HashMap<>();
-                stringStringHashMap.put("tagRssi", i + "");
-                stringStringHashMap.put("tagAnt", i + "");
-                stringStringHashMap.put("tagUid", "dsa3234sfadf43545435435" + i);
-                mFirstCurIvtClist.add(stringStringHashMap);
-                if (i < 8) {
-                    mExitCurIvtClist.add(stringStringHashMap);
-                }
-            }
-            mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
-            isScan = false;
+           initDebuggerData();
         } else {
             connect232(connectCount);
         }
+    }
+
+    private void initDebuggerData() {
+        //添加参与扫描的天线
+
+        mThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //调试模式
+                    mCurIvtClist = new ArrayList<>();
+                    for (int i = 0; i < 10; i++) {
+                        HashMap<String, String> stringStringHashMap = new HashMap<>();
+                        stringStringHashMap.put("tagRssi", i + "");
+                        stringStringHashMap.put("tagAnt", i + "");
+                        stringStringHashMap.put("tagUid", "dsa3234sfadf43545435435" + i);
+                        mFirstCurIvtClist.add(stringStringHashMap);
+                        if (i < 8) {
+                            mExitCurIvtClist.add(stringStringHashMap);
+                        }
+                    }
+                    Thread.sleep(5000);
+
+                    mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
+                    isScan = false;
+                } catch (Exception ex) {
+                    mThread = null;
+                    scanloadingDialog.loadFailed();
+                }
+            }
+        });
+        mThread.start();
     }
 
 
@@ -216,6 +242,8 @@ public class DrugMainActivity extends CustomActivity {
                 drugMainPresenter.showPopSerialPortTest();
             }
         });
+        scanloadingDialog = new LoadingDialog(this);
+        scanloadingDialog.setLoadingText("扫描中..").setSuccessText("扫描完毕!").setFailedText("扫描失败!").show();
     }
 
     @Override
@@ -304,8 +332,7 @@ public class DrugMainActivity extends CustomActivity {
 
     private void getRfidData() {
         //添加参与扫描的天线
-        LoadingDialog scanloadingDialog = new LoadingDialog(this);
-        scanloadingDialog.setLoadingText("扫描中..").setSuccessText("扫描完毕!").setFailedText("扫描失败!").show();
+
         for (int i = 1; i < 11; i++) {
             AddAntenna(i);
         }
@@ -380,13 +407,12 @@ public class DrugMainActivity extends CustomActivity {
                         mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
                         //doTimeWork();
                         isScan = false;
-                        scanloadingDialog.loadSuccess();
 //                        mThread = null;
                     }
                     mThread = null;
                 } catch (Exception ex) {
                     mThread = null;
-                    scanloadingDialog.loadFailed();
+                    mHandler.sendEmptyMessage(MSG_UPDATE_FAIL);
                 }
             }
         });
