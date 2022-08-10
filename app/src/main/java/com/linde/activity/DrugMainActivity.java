@@ -288,13 +288,7 @@ public class DrugMainActivity extends CustomActivity {
             result = HfData.reader.OpenReader(rfidBaudRate, rfidPort, 0, 1, null);
 
             if (result == 0) {
-                InventoryTagMap map = new InventoryTagMap();//默认启用第一个天线盘点
-                map.Antenna = 1;
-                map.isCheck = true;
-                map.newlist = new ArrayList<HashMap<String, String>>();
-                map.oldlist = new ArrayList<HashMap<String, String>>();
-                HfData.mlist.add(map);
-
+                intAddAntenna();
                 getRfidData();
                 connecttloadingDialog.loadSuccess();
             } else {
@@ -330,12 +324,15 @@ public class DrugMainActivity extends CustomActivity {
         HfData.mlist.add(map);
     }
 
-    private void getRfidData() {
+    private  void intAddAntenna(){
         //添加参与扫描的天线
-
+        HfData.mlist.clear();
         for (int i = 1; i < 11; i++) {
             AddAntenna(i);
         }
+    }
+    private void getRfidData() {
+
         isScan = true;
         mCurIvtClist = new ArrayList<HashMap<String, String>>();
         mlastIvtClist = new ArrayList<HashMap<String, String>>();
