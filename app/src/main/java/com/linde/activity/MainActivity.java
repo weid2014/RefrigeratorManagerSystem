@@ -1,6 +1,5 @@
 package com.linde.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +18,7 @@ import com.linde.presenter.IMainPresenter;
 import com.linde.presenter.MainPresenter;
 import com.linde.refrigeratormanagementsystem.R;
 import com.linde.ui.MyDialog;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
@@ -114,6 +114,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
+        if (!GlobalData.debugger) return;
         switch (view.getId()) {
             case R.id.imageLock:
                 changeUI();
@@ -165,6 +166,8 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
 
 
     private void jumpToIdentity(UserType type) {
+        LoadingDialog loadingDialog = new LoadingDialog(this);
+        loadingDialog.setLoadingText("开锁中...").setSuccessText("开锁成功!").show();
         disableClick();
         if (currentTime == 0 || System.currentTimeMillis() - currentTime > 2000) {
             //如果第一次进入方法，或者进入方法的时间大于2秒，则进入主页面
@@ -172,6 +175,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    loadingDialog.loadSuccess();
                     Intent intent = new Intent(MainActivity.this, DrugMainActivity.class);
                     intent.putExtra("UserType", type.toString());
                     startActivityForResult(intent, 998);

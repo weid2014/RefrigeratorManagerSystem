@@ -23,6 +23,7 @@ import com.linde.presenter.IDrugMainPresenter;
 import com.linde.refrigeratormanagementsystem.R;
 import com.linde.rfid.HfData;
 import com.linde.rfid.InventoryTagMap;
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class DrugMainActivity extends CustomActivity {
     private boolean isLockAndExit = false;//锁定并退出
 
     private IDrugMainPresenter drugMainPresenter;
-
+    private TextView tvUserNameMain;
     private static final int MSG_UPDATE_LISTVIEW = 0;
     private static final int MSG_UPDATE_INFO = 1;
     private long Number = 0;
@@ -52,7 +53,6 @@ public class DrugMainActivity extends CustomActivity {
     private static ArrayList<HashMap<String, String>> mnewIvtClist;
     private static ArrayList<HashMap<String, String>> mIvtInfolist;
     private List<DrugBean> drugBeanList = null;
-    private List<DrugBean> drugOldInBeanList = null;
     private List<DrugBean> drugInBeanList = null;
     private List<DrugBean> drugOutBeanList = null;
     private Handler mHandler = new Handler() {
@@ -63,33 +63,24 @@ public class DrugMainActivity extends CustomActivity {
             //if(isCanceled) return;
             switch (msg.what) {
                 case MSG_UPDATE_LISTVIEW:
-                    drugBeanList = new ArrayList<>();
-                    Date date = new Date();
-
-                    long times = date.getTime();
-                    //时间戳
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String dateString = formatter.format(date);
-                    for (HashMap<String, String> stringStringHashMap : mFirstCurIvtClist) {
-                        String tagRssi = stringStringHashMap.get("tagRssi");
-                        String tagAnt = stringStringHashMap.get("tagAnt");
-                        String tagUid = stringStringHashMap.get("tagUid");
-                        DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, dateString, dateString, tagUid, 0);
-                        drugBeanList.add(drugBean);
-                    }
-                    drugAdapter.setDrugBeanList(drugBeanList);
-                    drugAdapter.notifyDataSetChanged();
-                    Log.d("lalala", "drugBeanList" + drugBeanList.size());
                     Toast.makeText(DrugMainActivity.this, "总数=" + Number + "个", Toast.LENGTH_SHORT).show();
                     if (isLockAndExit) {
                         drugInBeanList = new ArrayList<>();
                         drugOutBeanList = new ArrayList<>();
-
+                        drugBeanList = new ArrayList<>();
+                        tvUserNameMain.setText("开锁:" + mFirstCurIvtClist.size() + "个，落锁时候还有=" + mExitCurIvtClist.size() + "个");
+                        for (HashMap<String, String> stringStringHashMap : mFirstCurIvtClist) {
+                            String tagRssi = stringStringHashMap.get("tagRssi");
+                            String tagAnt = stringStringHashMap.get("tagAnt");
+                            String tagUid = stringStringHashMap.get("tagUid");
+                            DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, getDateString(), getDateString(), tagUid, 0);
+                            drugBeanList.add(drugBean);
+                        }
                         for (HashMap<String, String> stringStringHashMap : mExitCurIvtClist) {
                             String tagRssi = stringStringHashMap.get("tagRssi");
                             String tagAnt = stringStringHashMap.get("tagAnt");
                             String tagUid = stringStringHashMap.get("tagUid");
-                            DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, dateString, dateString, tagUid, 0);
+                            DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, getDateString(), getDateString(), tagUid, 0);
                             drugInBeanList.add(drugBean);
                         }
                         Log.d("lalala", "drugInBeanList" + drugInBeanList.size());
@@ -113,9 +104,32 @@ public class DrugMainActivity extends CustomActivity {
                         }
                         drugMainPresenter.setDrugBeanList(drugOutBeanList);
                         Log.d("lalala", "drugOutBeanList" + drugOutBeanList.size());
+                    } else {
+                        drugBeanList = new ArrayList<>();
+                        for (HashMap<String, String> stringStringHashMap : mFirstCurIvtClist) {
+                            String tagRssi = stringStringHashMap.get("tagRssi");
+                            String tagAnt = stringStringHashMap.get("tagAnt");
+                            String tagUid = stringStringHashMap.get("tagUid");
+                            DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, getDateString(), getDateString(), tagUid, 0);
+                            drugBeanList.add(drugBean);
+                        }
+                        drugAdapter.setDrugBeanList(drugBeanList);
+                        drugAdapter.notifyDataSetChanged();
+                        Log.d("lalala", "drugBeanList" + drugBeanList.size());
                     }
                     break;
                 case MSG_UPDATE_INFO:
+                    drugBeanList = new ArrayList<>();
+                    for (HashMap<String, String> stringStringHashMap : mIvtInfolist) {
+                        String tagRssi = stringStringHashMap.get("tagRssi");
+                        String tagAnt = stringStringHashMap.get("tagAnt");
+                        String tagUid = stringStringHashMap.get("tagUid");
+                        DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, getDateString(), getDateString(), tagUid, 0);
+                        drugBeanList.add(drugBean);
+                    }
+                    drugAdapter.setDrugBeanList(drugBeanList);
+                    drugAdapter.notifyDataSetChanged();
+                    Log.d("lalala", "MSG_UPDATE_INFO drugBeanList" + drugBeanList.size());
                     break;
                 default:
                     break;
@@ -124,6 +138,16 @@ public class DrugMainActivity extends CustomActivity {
         }
 
     };
+
+    private String getDateString() {
+        Date date = new Date();
+
+        long times = date.getTime();
+        //时间戳
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateString = formatter.format(date);
+        return dateString;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +177,7 @@ public class DrugMainActivity extends CustomActivity {
                 }
             }
             mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
+            isScan = false;
         } else {
             connect232(connectCount);
         }
@@ -175,14 +200,14 @@ public class DrugMainActivity extends CustomActivity {
                 isLockAndExit = true;
                 if (!GlobalData.debugger) {
                     getRfidData();
-                }else {
+                } else {
                     Log.d("lalala", "退出按键,弹出dialog");
                     mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
                     drugMainPresenter.showDiaLog();
                 }
             }
         });
-        TextView tvUserNameMain = findViewById(R.id.tvUserNameMain);
+        tvUserNameMain = findViewById(R.id.tvUserNameMain);
         tvUserNameMain.setText(drugMainPresenter.getUserName());
         tvUserNameMain.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,7 +221,8 @@ public class DrugMainActivity extends CustomActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (isFirst && hasFocus) {
+        if (isFirst && hasFocus && !isScan) {
+            //登入时候弹出欢迎界面
             drugMainPresenter.showPop();
             isFirst = false;
         }
@@ -213,7 +239,6 @@ public class DrugMainActivity extends CustomActivity {
     }
 
     private void onActivityDestroy() {
-
         isScan = false;
         HfData.reader.CloseReader();
         if (mThread != null) {
@@ -221,16 +246,17 @@ public class DrugMainActivity extends CustomActivity {
         }
     }
 
-
     private void connect232(int count) {
+        LoadingDialog connecttloadingDialog = new LoadingDialog(this);
+        connecttloadingDialog.setLoadingText("连接扫描仪...").setSuccessText("连接成功!").setFailedText("连接失败!").show();
         try {
             int result = 0x30;
             String rfidPort = "/dev/ttyUSB" + count;
             int rfidBaudRate = 19200;
-            Toast.makeText(
+            /*Toast.makeText(
                     getApplicationContext(),
                     "开始连接232，地址:" + rfidPort + "---波特率:" + rfidBaudRate,
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_SHORT).show();*/
             result = HfData.reader.OpenReader(rfidBaudRate, rfidPort, 0, 1, null);
 
             if (result == 0) {
@@ -241,24 +267,14 @@ public class DrugMainActivity extends CustomActivity {
                 map.oldlist = new ArrayList<HashMap<String, String>>();
                 HfData.mlist.add(map);
 
-                Toast.makeText(
-                        getApplicationContext(),
-                        "连接232成功",
-                        Toast.LENGTH_SHORT).show();
                 getRfidData();
-
+                connecttloadingDialog.loadSuccess();
             } else {
-                Toast.makeText(
-                        getApplicationContext(),
-                        "连接失败",
-                        Toast.LENGTH_SHORT).show();
+                connecttloadingDialog.loadFailed();
                 continueConnect(count);
             }
         } catch (Exception e) {
-            Toast.makeText(
-                    getApplicationContext(),
-                    "连接失败",
-                    Toast.LENGTH_SHORT).show();
+            connecttloadingDialog.loadFailed();
             continueConnect(count);
         }
     }
@@ -286,9 +302,10 @@ public class DrugMainActivity extends CustomActivity {
         HfData.mlist.add(map);
     }
 
-
     private void getRfidData() {
         //添加参与扫描的天线
+        LoadingDialog scanloadingDialog = new LoadingDialog(this);
+        scanloadingDialog.setLoadingText("扫描中..").setSuccessText("扫描完毕!").setFailedText("扫描失败!").show();
         for (int i = 1; i < 11; i++) {
             AddAntenna(i);
         }
@@ -363,11 +380,13 @@ public class DrugMainActivity extends CustomActivity {
                         mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
                         //doTimeWork();
                         isScan = false;
+                        scanloadingDialog.loadSuccess();
 //                        mThread = null;
                     }
                     mThread = null;
                 } catch (Exception ex) {
                     mThread = null;
+                    scanloadingDialog.loadFailed();
                 }
             }
         });
@@ -447,7 +466,7 @@ public class DrugMainActivity extends CustomActivity {
                 if (index == -1) {
                     result += (uid + "-" + temp.get("tagAnt") + " ");
                 } else {
-                    ;
+
                 }
             }
         }
@@ -465,11 +484,10 @@ public class DrugMainActivity extends CustomActivity {
                 if (index == -1) {
                     result += (uid + "-" + temp.get("tagAnt") + " ");
                 } else {
-                    ;
+
                 }
             }
         }
         return result;
     }
-
 }
