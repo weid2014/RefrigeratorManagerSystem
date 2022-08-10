@@ -202,7 +202,7 @@ public class DrugMainActivity extends CustomActivity {
                     isScan = false;
                 } catch (Exception ex) {
                     mThread = null;
-                    scanloadingDialog.loadFailed();
+                    mHandler.sendEmptyMessage(MSG_UPDATE_FAIL);
                 }
             }
         });
