@@ -1,21 +1,12 @@
 package com.linde.manager;
 
-import androidx.annotation.NonNull;
-
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * @author wade
  * @Description:(线程池管理类)
  * @date 2022/8/13 9:31
  */
 public class ThreadPoolManager {
-    private final String TAG = this.getClass().getSimpleName();
+    /*private final String TAG = this.getClass().getSimpleName();
     private static final int CORE_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2; // 核心线程数为 CPU数＊2
     private static final int MAXIMUM_POOL_SIZE = 64;    // 线程队列最大线程数
     private static final int KEEP_ALIVE_TIME = 1;    // 保持存活时间 1秒
@@ -53,5 +44,5 @@ public class ThreadPoolManager {
     @Deprecated
     public void shutdownNow() {
         mExecutor.shutdownNow();
-    }
+    }*/
 }

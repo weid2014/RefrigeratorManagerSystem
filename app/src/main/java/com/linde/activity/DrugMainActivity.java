@@ -284,10 +284,6 @@ public class DrugMainActivity extends CustomActivity {
             int result = 0x30;
             String rfidPort = "/dev/ttyUSB" + count;
             int rfidBaudRate = 19200;
-            /*Toast.makeText(
-                    getApplicationContext(),
-                    "开始连接232，地址:" + rfidPort + "---波特率:" + rfidBaudRate,
-                    Toast.LENGTH_SHORT).show();*/
             result = HfData.reader.OpenReader(rfidBaudRate, rfidPort, 0, 1, null);
 
             if (result == 0) {
