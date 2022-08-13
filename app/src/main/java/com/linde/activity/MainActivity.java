@@ -208,7 +208,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             //提示是否退出软件
-            MyDialog myDialog = new MyDialog(this, R.style.MyDialog);
+            /*MyDialog myDialog = new MyDialog(this, R.style.MyDialog);
             myDialog.setMessage("是否退出软件?");
             myDialog.setYesOnclickListener("确定", new MyDialog.onYesOnclickListener() {
                 @Override
@@ -225,7 +225,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
                     myDialog.dismiss();
                 }
             });
-            myDialog.show();
+            myDialog.show();*/
         }
 
         return super.onKeyDown(keyCode, event);

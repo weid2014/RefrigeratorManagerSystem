@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class DrugMainActivity extends CustomActivity {
     private RecyclerView recyclerViewDrug;
@@ -107,6 +108,7 @@ public class DrugMainActivity extends CustomActivity {
                             }
                         }
                         drugMainPresenter.setDrugBeanList(drugOutBeanList);
+                        drugMainPresenter.showDiaLog();
                         Log.d("lalala", "drugOutBeanList" + drugOutBeanList.size());
                     } else {
                         drugBeanList = new ArrayList<>();
@@ -123,7 +125,7 @@ public class DrugMainActivity extends CustomActivity {
                     }
                     break;
                 case MSG_UPDATE_INFO:
-                    drugBeanList = new ArrayList<>();
+                    /*drugBeanList = new ArrayList<>();
                     for (HashMap<String, String> stringStringHashMap : mIvtInfolist) {
                         String tagRssi = stringStringHashMap.get("tagRssi");
                         String tagAnt = stringStringHashMap.get("tagAnt");
@@ -133,7 +135,7 @@ public class DrugMainActivity extends CustomActivity {
                     }
                     drugAdapter.setDrugBeanList(drugBeanList);
                     drugAdapter.notifyDataSetChanged();
-                    Log.d("lalala", "MSG_UPDATE_INFO drugBeanList" + drugBeanList.size());
+                    Log.d("lalala", "MSG_UPDATE_INFO drugBeanList" + drugBeanList.size());*/
                     break;
 
                 case MSG_UPDATE_FAIL:
@@ -172,6 +174,7 @@ public class DrugMainActivity extends CustomActivity {
         mExitCurIvtClist = new ArrayList<HashMap<String, String>>();
         if (GlobalData.debugger) {
            initDebuggerData();
+            testThread();
         } else {
             connect232(connectCount);
         }
@@ -243,7 +246,7 @@ public class DrugMainActivity extends CustomActivity {
             }
         });
         scanloadingDialog = new LoadingDialog(this);
-        scanloadingDialog.setLoadingText("扫描中..").setSuccessText("扫描完毕!").setFailedText("扫描失败!").show();
+
     }
 
     @Override
@@ -315,6 +318,23 @@ public class DrugMainActivity extends CustomActivity {
         connect232(count);
     }
 
+    private CountDownLatch mCountDownLatch;
+    private void testThread(){
+        mCountDownLatch = new CountDownLatch(10);
+        for (int i=1;i<12;i++){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                        Log.d("TAG", Thread.currentThread().getName()+" start:"+mCountDownLatch.getCount());
+                        mCountDownLatch.countDown();
+                        Log.d("TAG", Thread.currentThread().getName()+" end:"+mCountDownLatch.getCount());
+
+                }
+            }).start();
+        }
+
+    }
+
     private void AddAntenna(int antenna) {
         InventoryTagMap map = new InventoryTagMap();
         map.Antenna = antenna;
@@ -332,7 +352,7 @@ public class DrugMainActivity extends CustomActivity {
         }
     }
     private void getRfidData() {
-
+        scanloadingDialog.setLoadingText("扫描中..").setSuccessText("扫描完毕!").setFailedText("扫描失败!").show();
         isScan = true;
         mCurIvtClist = new ArrayList<HashMap<String, String>>();
         mlastIvtClist = new ArrayList<HashMap<String, String>>();
@@ -396,7 +416,7 @@ public class DrugMainActivity extends CustomActivity {
                         Number = mCurIvtClist.size();
                         if (isLockAndExit) {
                             mExitCurIvtClist = mCurIvtClist;
-                            drugMainPresenter.showDiaLog();
+
                         } else {
                             mFirstCurIvtClist = mCurIvtClist;
                         }
