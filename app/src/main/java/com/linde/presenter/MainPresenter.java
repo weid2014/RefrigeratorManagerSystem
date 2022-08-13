@@ -24,8 +24,8 @@ public class MainPresenter extends PresenterBase implements IMainPresenter {
 
         if (popupWindow == null) {
             View contentView = LayoutInflater.from(customActivity).inflate(R.layout.pup_failt, null);
-            popupWindow = new PopupWindow(contentView, 600,
-                    800, true);
+            popupWindow = new PopupWindow(contentView, 700,
+                    1000, true);
             popupWindow.setFocusable(false);
             popupWindow.setOutsideTouchable(false);
             popupWindow.setClippingEnabled(false);

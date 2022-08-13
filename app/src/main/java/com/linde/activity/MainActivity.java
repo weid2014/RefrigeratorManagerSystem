@@ -1,5 +1,7 @@
 package com.linde.activity;
 
+import android.app.StatusBarManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,6 +59,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
         init();
         if (GlobalData.debugger) {
             ableClick();
@@ -67,7 +70,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
             DispQueue = new DispQueueThread();
             DispQueue.start();
             initSerialtty3();
-            initSerialtty4();
+//            initSerialtty4();
         }
     }
 
@@ -167,7 +170,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
 
     private void jumpToIdentity(UserType type) {
         LoadingDialog loadingDialog = new LoadingDialog(this);
-        loadingDialog.setLoadingText("开锁中...").setSuccessText("开锁成功!").show();
+//        loadingDialog.setLoadingText("开锁中...").setSuccessText("开锁成功!").show();
         disableClick();
         if (currentTime == 0 || System.currentTimeMillis() - currentTime > 2000) {
             //如果第一次进入方法，或者进入方法的时间大于2秒，则进入主页面
@@ -175,7 +178,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    loadingDialog.loadSuccess();
+//                    loadingDialog.loadSuccess();
                     Intent intent = new Intent(MainActivity.this, DrugMainActivity.class);
                     intent.putExtra("UserType", type.toString());
                     startActivityForResult(intent, 998);
@@ -366,11 +369,11 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
 //        sbMsg.append(m_sdfDate.format(new Date()));
         sbMsg.append(sMsg);
         sbMsg.append("\r\n");
-        showTipsInfo(sbMsg.toString());
+//        showTipsInfo(sbMsg.toString());
         //使用我的手机NFC，读取到信息就开锁
         if (isLocked && (sbMsg.toString().contains("F4") || sbMsg.toString().contains("FE") || sbMsg.toString().contains("FF"))) {
             isLocked = false;
-            sendLockHexByStatus(true);
+//            sendLockHexByStatus(true);
             changeUI();
             jumpToIdentity(UserType.OutUser);
         }

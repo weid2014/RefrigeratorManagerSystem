@@ -10,6 +10,8 @@ public interface IDrugMainPresenter {
      */
     void showDiaLog();
 
+    void showPopOut();
+
     /**
      *
      */

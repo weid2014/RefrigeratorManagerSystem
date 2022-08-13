@@ -8,7 +8,7 @@
     <uses-feature android:name="android.hardware.nfc" android:required="true" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>
     <application
         android:name="com.linde.application.MyApplication"
         android:allowBackup="true"

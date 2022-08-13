@@ -112,8 +112,8 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         View contentView = null;
         if (contentView == null) {
             contentView = LayoutInflater.from(customActivity).inflate(R.layout.pup_tip, null);
-            popupWindow = new PopupWindow(contentView, 600,
-                    800, true);
+            popupWindow = new PopupWindow(contentView, 700,
+                    1000, true);
             popupWindow.setFocusable(true);
             popupWindow.setOutsideTouchable(false);
             popupWindow.setClippingEnabled(false);
@@ -159,8 +159,8 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         View contentView = null;
         if (contentView == null) {
             contentView = LayoutInflater.from(customActivity).inflate(R.layout.pup_serial_port, null);
-            popupWindow = new PopupWindow(contentView, 600,
-                    800, true);
+            popupWindow = new PopupWindow(contentView, 700,
+                    1000, true);
             popupWindow.setFocusable(true);
             popupWindow.setOutsideTouchable(false);
             popupWindow.setClippingEnabled(false);
@@ -229,7 +229,7 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         setAlpha(0.2f);
     }
 
-    private void showPopOut() {
+    public void showPopOut() {
         int status = 0;
         if (userName.equals("出库员")) {
             status = 1;
@@ -239,8 +239,8 @@ public class DrugMainPresenter extends PresenterBase implements IDrugMainPresent
         View contentView = null;
         if (contentView == null) {
             contentView = LayoutInflater.from(customActivity).inflate(R.layout.pup_out_list, null);
-            popupWindowOut = new PopupWindow(contentView, 600,
-                    800, true);
+            popupWindowOut = new PopupWindow(contentView, 700,
+                    1000, true);
             popupWindowOut.setFocusable(true);
             popupWindowOut.setOutsideTouchable(false);
             popupWindowOut.setClippingEnabled(false);
