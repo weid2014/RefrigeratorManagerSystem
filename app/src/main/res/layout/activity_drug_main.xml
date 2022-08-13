@@ -92,7 +92,7 @@
             android:layout_margin="8dp"
             android:layout_weight="1"
             android:background="@drawable/button_style"
-            android:text="锁定并登出"
+            android:text="扫描并登出"
             android:textColor="@color/white" />
     </LinearLayout>
 

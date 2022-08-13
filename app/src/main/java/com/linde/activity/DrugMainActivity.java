@@ -21,15 +21,20 @@ import com.linde.global.GlobalData;
 import com.linde.presenter.DrugMainPresenter;
 import com.linde.presenter.IDrugMainPresenter;
 import com.linde.refrigeratormanagementsystem.R;
-import com.linde.rfid.HfData;
-import com.linde.rfid.InventoryTagMap;
+import com.linde.trans2000.ReadTag;
+import com.linde.trans2000.TagCallback;
+import com.linde.trans2000.UHFLib;
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 
 public class DrugMainActivity extends CustomActivity {
@@ -68,28 +73,12 @@ public class DrugMainActivity extends CustomActivity {
             switch (msg.what) {
                 case MSG_UPDATE_LISTVIEW:
                     scanloadingDialog.loadSuccess();
-                    Toast.makeText(DrugMainActivity.this, "总数=" + Number + "个", Toast.LENGTH_SHORT).show();
                     if (isLockAndExit) {
-                        drugInBeanList = new ArrayList<>();
                         drugOutBeanList = new ArrayList<>();
-                        drugBeanList = new ArrayList<>();
-                        tvUserNameMain.setText("开锁:" + mFirstCurIvtClist.size() + "个，落锁时候还有=" + mExitCurIvtClist.size() + "个");
-                        for (HashMap<String, String> stringStringHashMap : mFirstCurIvtClist) {
-                            String tagRssi = stringStringHashMap.get("tagRssi");
-                            String tagAnt = stringStringHashMap.get("tagAnt");
-                            String tagUid = stringStringHashMap.get("tagUid");
-                            DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, getDateString(), getDateString(), tagUid, 0);
-                            drugBeanList.add(drugBean);
-                        }
-                        for (HashMap<String, String> stringStringHashMap : mExitCurIvtClist) {
-                            String tagRssi = stringStringHashMap.get("tagRssi");
-                            String tagAnt = stringStringHashMap.get("tagAnt");
-                            String tagUid = stringStringHashMap.get("tagUid");
-                            DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, getDateString(), getDateString(), tagUid, 0);
-                            drugInBeanList.add(drugBean);
-                        }
+                        tvUserNameMain.setText("开锁:" + "个，落锁时候还有=" + drugInBeanList.size() + "个");
+
                         Log.d("lalala", "drugInBeanList" + drugInBeanList.size());
-                        if (mExitCurIvtClist.size() > mFirstCurIvtClist.size()) {
+                        if (drugInBeanList.size() > drugBeanList.size()) {
                             drugMainPresenter.setUserName("入库员");
                             Log.d("lalala", "入库员");
                             //判断出库入库
@@ -111,31 +100,11 @@ public class DrugMainActivity extends CustomActivity {
                         drugMainPresenter.showDiaLog();
                         Log.d("lalala", "drugOutBeanList" + drugOutBeanList.size());
                     } else {
-                        drugBeanList = new ArrayList<>();
-                        for (HashMap<String, String> stringStringHashMap : mFirstCurIvtClist) {
-                            String tagRssi = stringStringHashMap.get("tagRssi");
-                            String tagAnt = stringStringHashMap.get("tagAnt");
-                            String tagUid = stringStringHashMap.get("tagUid");
-                            DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, getDateString(), getDateString(), tagUid, 0);
-                            drugBeanList.add(drugBean);
-                        }
                         drugAdapter.setDrugBeanList(drugBeanList);
                         drugAdapter.notifyDataSetChanged();
                         Log.d("lalala", "drugBeanList" + drugBeanList.size());
+                        tvUserNameMain.setText("开锁总数:" + drugBeanList.size() + "个");
                     }
-                    break;
-                case MSG_UPDATE_INFO:
-                    /*drugBeanList = new ArrayList<>();
-                    for (HashMap<String, String> stringStringHashMap : mIvtInfolist) {
-                        String tagRssi = stringStringHashMap.get("tagRssi");
-                        String tagAnt = stringStringHashMap.get("tagAnt");
-                        String tagUid = stringStringHashMap.get("tagUid");
-                        DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, getDateString(), getDateString(), tagUid, 0);
-                        drugBeanList.add(drugBean);
-                    }
-                    drugAdapter.setDrugBeanList(drugBeanList);
-                    drugAdapter.notifyDataSetChanged();
-                    Log.d("lalala", "MSG_UPDATE_INFO drugBeanList" + drugBeanList.size());*/
                     break;
 
                 case MSG_UPDATE_FAIL:
@@ -168,12 +137,13 @@ public class DrugMainActivity extends CustomActivity {
     }
 
     private void initData() {
+        scanloadingDialog.setLoadingText("扫描中..").setSuccessText("扫描完毕!").setFailedText("扫描失败!").show();
         connectCount = 0;
         //初始化登入和登出的列表
         mFirstCurIvtClist = new ArrayList<HashMap<String, String>>();
         mExitCurIvtClist = new ArrayList<HashMap<String, String>>();
         if (GlobalData.debugger) {
-           initDebuggerData();
+            initDebuggerData();
             testThread();
         } else {
             connect232(connectCount);
@@ -183,39 +153,41 @@ public class DrugMainActivity extends CustomActivity {
     private void initDebuggerData() {
         //添加参与扫描的天线
 
-        mThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    //调试模式
-                    mCurIvtClist = new ArrayList<>();
-                    for (int i = 0; i < 10; i++) {
-                        HashMap<String, String> stringStringHashMap = new HashMap<>();
-                        stringStringHashMap.put("tagRssi", i + "");
-                        stringStringHashMap.put("tagAnt", i + "");
-                        stringStringHashMap.put("tagUid", "dsa3234sfadf43545435435" + i);
-                        mFirstCurIvtClist.add(stringStringHashMap);
-                        if (i < 8) {
-                            mExitCurIvtClist.add(stringStringHashMap);
-                        }
-                    }
-                    Thread.sleep(5000);
 
-                    mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
-                    isScan = false;
-                } catch (Exception ex) {
-                    mThread = null;
-                    mHandler.sendEmptyMessage(MSG_UPDATE_FAIL);
-                }
-            }
-        });
-        mThread.start();
+//        mThread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    //调试模式
+//                    mCurIvtClist = new ArrayList<>();
+//                    for (int i = 0; i < 10; i++) {
+//                        HashMap<String, String> stringStringHashMap = new HashMap<>();
+//                        stringStringHashMap.put("tagRssi", i + "");
+//                        stringStringHashMap.put("tagAnt", i + "");
+//                        stringStringHashMap.put("tagUid", "dsa3234sfadf43545435435" + i);
+//                        mFirstCurIvtClist.add(stringStringHashMap);
+//                        if (i < 8) {
+//                            mExitCurIvtClist.add(stringStringHashMap);
+//                        }
+//                    }
+//                    Thread.sleep(5000);
+//
+//                    mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
+//                    isScan = false;
+//                } catch (Exception ex) {
+//                    mThread = null;
+//                    mHandler.sendEmptyMessage(MSG_UPDATE_FAIL);
+//                }
+//            }
+//        });
+//        mThread.start();
     }
 
 
     private void initView() {
         isLockAndExit = false;
         drugBeanList = new ArrayList<>();
+        drugInBeanList = new ArrayList<>();
         recyclerViewDrug = findViewById(R.id.recyclerViewDrug);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerViewDrug.setLayoutManager(layoutManager);
@@ -227,8 +199,14 @@ public class DrugMainActivity extends CustomActivity {
             public void onClick(View view) {
                 //退出按键,弹出dialog
                 isLockAndExit = true;
+                isFinish = false;
                 if (!GlobalData.debugger) {
-                    getRfidData();
+                    //todo
+//                    getDataNew();
+                    scanloadingDialog.setLoadingText("扫描中..").setSuccessText("扫描完毕!").setFailedText("扫描失败!").show();
+                    scanloadingDialog.show();
+                    dtIndexMap = new LinkedHashMap<String, Integer>();
+                    Reader.rrlib.StartRead();
                 } else {
                     Log.d("lalala", "退出按键,弹出dialog");
                     mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
@@ -271,7 +249,7 @@ public class DrugMainActivity extends CustomActivity {
 
     private void onActivityDestroy() {
         isScan = false;
-        HfData.reader.CloseReader();
+       Reader.rrlib.DisConnect();
         if (mThread != null) {
             mThread = null;
         }
@@ -281,24 +259,131 @@ public class DrugMainActivity extends CustomActivity {
         LoadingDialog connecttloadingDialog = new LoadingDialog(this);
         connecttloadingDialog.setLoadingText("连接扫描仪...").setSuccessText("连接成功!").setFailedText("连接失败!").show();
         try {
-            int result = 0x30;
+//            int result = 0x30;
             String rfidPort = "/dev/ttyUSB" + count;
-            int rfidBaudRate = 19200;
-            result = HfData.reader.OpenReader(rfidBaudRate, rfidPort, 0, 1, null);
+            int rfidBaudRate = 115200;
 
+            Reader.rrlib = new UHFLib(0, "");
+            byte[] data = new byte[1];
+            int result = Reader.rrlib.Connect(rfidPort, rfidBaudRate);
+            data[0] = (byte) (result);
+//                    mHandler.obtainMessage(MSG_SHOW_RESULT, 1, -1, data).sendToTarget();
             if (result == 0) {
-                intAddAntenna();
-                getRfidData();
                 connecttloadingDialog.loadSuccess();
+                getDataNew();
             } else {
                 connecttloadingDialog.loadFailed();
                 continueConnect(count);
             }
+
+
         } catch (Exception e) {
             connecttloadingDialog.loadFailed();
             continueConnect(count);
         }
     }
+
+
+    private void getDataNew() {
+        scanloadingDialog.show();
+        dtIndexMap = new LinkedHashMap<String, Integer>();
+        MsgCallback callback = new MsgCallback();
+        Reader.rrlib.SetCallBack(callback);
+        if (Reader.rrlib.StartRead() == 0) {
+
+/*            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    mHandler.removeMessages(MSG_UPDATE_TIME);
+                    mHandler.sendEmptyMessage(MSG_UPDATE_TIME);
+                }
+            }, 0, SCAN_INTERVAL);*/
+            lsTagList = new ArrayList<InventoryTagMap>();
+            dtIndexMap = new LinkedHashMap<String, Integer>();
+        }
+    }
+
+    private static final int MSG_UPDATE_TIME = 6;
+    private static final int SCAN_INTERVAL = 20;
+    public static List<InventoryTagMap> lsTagList = new ArrayList<InventoryTagMap>();
+    public Map<String, Integer> dtIndexMap = new LinkedHashMap<String, Integer>();
+    private List<InventoryTagMap> data;
+
+    public static class InventoryTagMap {
+        public String strEPC;
+        public int antenna;
+        public String strRSSI;
+        public int nReadCount;
+    }
+
+    private boolean isFinish = false;
+    long currentTime = 0;
+
+    public class MsgCallback implements TagCallback {
+
+        @Override
+        public void tagCallback(ReadTag arg0) {
+            // TODO Auto-generated method stub
+            String epc = arg0.epcId.toUpperCase();
+            String DevName = arg0.DevName;
+            InventoryTagMap m;
+            Integer findIndex = dtIndexMap.get(epc);
+            if (findIndex == null) {
+                dtIndexMap.put(epc, dtIndexMap.size());
+                m = new InventoryTagMap();
+                m.strEPC = epc;
+                m.antenna = 1 << (arg0.antId - 1);
+                m.strRSSI = String.valueOf(arg0.rssi);
+                m.nReadCount = 1;
+                lsTagList.add(m);
+
+                String tagRssi = m.strRSSI;
+                String tagAnt = m.antenna + "";
+                String tagUid = m.strEPC;
+                DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + tagRssi, tagAnt, getDateString(), getDateString(), tagUid, 0);
+                currentTime = System.currentTimeMillis();
+                if (isLockAndExit) {
+                    drugInBeanList.add(drugBean);
+                    Log.d("weid", "drugInBeanList.size=" + drugInBeanList.size());
+                } else {
+                    drugBeanList.add(drugBean);
+                    Log.d("weid", "drugBeanList.size=" + drugBeanList.size());
+                }
+
+
+            } else {
+                m = lsTagList.get(findIndex);
+                m.antenna |= 1 << (arg0.antId - 1);
+                m.nReadCount++;
+                m.strRSSI = String.valueOf(arg0.rssi);
+
+                if (System.currentTimeMillis() - currentTime > 3000) {
+                    Log.d("weid", "===================");
+                    Reader.rrlib.StopRead();
+                }
+            }
+
+        }
+
+        @Override
+        public int tagCallbackFailed(int reason) {
+            // TODO Auto-generated method stub
+            Log.d("weid", "tagCallbackFailed===================");
+//            scanloadingDialog.loadFailed();
+            return 0;
+        }
+
+        @Override
+        public void ReadOver() {
+            Log.d("weid", "ReadOver===================");
+            mHandler.removeMessages(MSG_UPDATE_LISTVIEW);
+            mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
+        }
+    }
+
+    ;
+
 
     //失败之后重新连接
     private void continueConnect(int count) {
@@ -315,15 +400,16 @@ public class DrugMainActivity extends CustomActivity {
     }
 
     private CountDownLatch mCountDownLatch;
-    private void testThread(){
+
+    private void testThread() {
         mCountDownLatch = new CountDownLatch(10);
-        for (int i=1;i<12;i++){
+        for (int i = 1; i < 12; i++) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                        Log.d("TAG", Thread.currentThread().getName()+" start:"+mCountDownLatch.getCount());
-                        mCountDownLatch.countDown();
-                        Log.d("TAG", Thread.currentThread().getName()+" end:"+mCountDownLatch.getCount());
+                    Log.d("TAG", Thread.currentThread().getName() + " start:" + mCountDownLatch.getCount());
+                    mCountDownLatch.countDown();
+                    Log.d("TAG", Thread.currentThread().getName() + " end:" + mCountDownLatch.getCount());
 
                 }
             }).start();
@@ -331,143 +417,6 @@ public class DrugMainActivity extends CustomActivity {
 
     }
 
-    private void AddAntenna(int antenna) {
-        InventoryTagMap map = new InventoryTagMap();
-        map.Antenna = antenna;
-        map.isCheck = true;
-        map.newlist = new ArrayList<HashMap<String, String>>();
-        map.oldlist = new ArrayList<HashMap<String, String>>();
-        HfData.mlist.add(map);
-    }
-
-    private  void intAddAntenna(){
-        //添加参与扫描的天线
-        HfData.mlist.clear();
-        for (int i = 1; i < 11; i++) {
-            AddAntenna(i);
-        }
-    }
-    private void getRfidData() {
-        scanloadingDialog.setLoadingText("扫描中..").setSuccessText("扫描完毕!").setFailedText("扫描失败!").show();
-        isScan = true;
-        mCurIvtClist = new ArrayList<HashMap<String, String>>();
-        mlastIvtClist = new ArrayList<HashMap<String, String>>();
-        mIvtInfolist = new ArrayList<HashMap<String, String>>();
-        mnewIvtClist = new ArrayList<HashMap<String, String>>();
-        mThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while (isScan) {
-                        long beginTime = System.currentTimeMillis();
-                        boolean selectant = false;
-                        mnewIvtClist.clear();
-                        for (int m = 0; m < HfData.mlist.size(); m++) {
-                            InventoryTagMap map = HfData.mlist.get(m);
-                            if (map.isCheck) {
-                                InventoryTagByAnt(map);
-                                selectant = true;
-                            }
-                        }
-                        Count++;
-                        mCurIvtClist.clear();
-                        if (mnewIvtClist.size() > 0) {
-                            for (int i = 0; i < mnewIvtClist.size(); i++) {
-                                HashMap<String, String> temp = new HashMap<String, String>();
-                                temp = mnewIvtClist.get(i);
-                                mCurIvtClist.add(temp);
-                            }
-                        }
-                        if (Count > 1) {
-                            String adduid = CheckAddList(mlastIvtClist, mCurIvtClist);
-                            String lostuid = CheckLostList(mlastIvtClist, mCurIvtClist);
-                            if (adduid.length() > 0 || lostuid.length() > 0) {
-                                String logStr = "";
-                                logStr += ("第 ");
-                                logStr += (String.valueOf(Count) + "轮, 标签总数量从") + String.valueOf(mlastIvtClist.size())
-                                        + "到" + String.valueOf(mCurIvtClist.size());
-                                if (adduid.length() > 0)
-                                    logStr += ("\n" + "增加UID：") + adduid;
-                                if (lostuid.length() > 0)
-                                    logStr += ("\n" + "减少UID：") + lostuid;
-
-                                HashMap<String, String> temp = new HashMap<String, String>();
-                                temp.put("tagInfo", logStr);
-                                if (mIvtInfolist.size() == 0)
-                                    mIvtInfolist.add(temp);
-                                else
-                                    mIvtInfolist.add(0, temp);
-                                mHandler.removeMessages(MSG_UPDATE_INFO);
-                                mHandler.sendEmptyMessage(MSG_UPDATE_INFO);
-                            }
-                        }
-                        mlastIvtClist.clear();
-                        if (mnewIvtClist.size() > 0) {
-                            for (int i = 0; i < mnewIvtClist.size(); i++) {
-                                HashMap<String, String> temp = new HashMap<String, String>();
-                                temp = mnewIvtClist.get(i);
-                                mlastIvtClist.add(temp);
-                            }
-                        }
-                        Number = mCurIvtClist.size();
-                        if (isLockAndExit) {
-                            mExitCurIvtClist = mCurIvtClist;
-
-                        } else {
-                            mFirstCurIvtClist = mCurIvtClist;
-                        }
-                        mHandler.removeMessages(MSG_UPDATE_LISTVIEW);
-                        mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
-                        //doTimeWork();
-                        isScan = false;
-//                        mThread = null;
-                    }
-                    mThread = null;
-                } catch (Exception ex) {
-                    mThread = null;
-                    mHandler.sendEmptyMessage(MSG_UPDATE_FAIL);
-                }
-            }
-        });
-        mThread.start();
-    }
-
-    private void InventoryTagByAnt(InventoryTagMap map) {
-        int Antenna = map.Antenna - 1;
-        int fCmdRet = HfData.reader.SetAntenna((byte) Antenna);
-        byte state = (byte) 0x86;
-        do {
-            byte[] UID = new byte[25600];
-            int[] CardNum = new int[1];
-            CardNum[0] = 0;
-            fCmdRet = HfData.reader.Inventory(state, UID, CardNum);
-            if (CardNum[0] > 0) {
-                for (int m = 0; m < CardNum[0]; m++) {
-                    byte[] daw = new byte[10];
-                    System.arraycopy(UID, m * 10, daw, 0, 10);
-                    String uidStr = HfData.bytesToHexString(daw, 1, 8);
-                    int rssi = daw[9] & 255;
-                    HashMap<String, String> temp = new HashMap<String, String>();
-                    //"tagUid","tagAnt","tagRssi"
-                    temp.put("tagUid", uidStr);
-                    temp.put("tagAnt", String.valueOf(map.Antenna));
-                    temp.put("tagRssi", String.valueOf(rssi));
-                    int index = checkIsExist(uidStr, mnewIvtClist);
-                    if (index == -1)//不存在
-                    {
-                        mnewIvtClist.add(temp);
-                    } else {
-                        int tagrssi = Integer.parseInt(
-                                mnewIvtClist.get(index).get("tagRssi"), 10);
-                        if (rssi > tagrssi) {
-                            mnewIvtClist.set(index, temp);
-                        }
-                    }
-                }
-            }
-            state = (byte) 0x82;
-        } while (fCmdRet != 0x0E);
-    }
 
     public boolean isEmpty(String strEPC) {
         return strEPC == null || strEPC.length() == 0;
@@ -529,4 +478,5 @@ public class DrugMainActivity extends CustomActivity {
         }
         return result;
     }
+
 }
