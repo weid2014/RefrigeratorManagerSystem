@@ -1,15 +1,15 @@
 package com.linde.activity;
 
-import android.app.StatusBarManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -55,6 +55,9 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
     private long currentTime = 0L;
     private ImageView imageScan;
 
+    final static int COUNTS = 7;//点击次数
+    final static long DURATION = 3 * 1000;//规定有效时间
+    long[] mHits = new long[COUNTS];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +105,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
         imageScan.setBackgroundResource(R.mipmap.ic_scan);
 
         imageArrow = findViewById(R.id.imageArrow);
+        imageArrow.setOnClickListener(this);
 
         imageLock = findViewById(R.id.imageLock);
         imageLock.setOnClickListener(this);
@@ -123,7 +127,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
         if (!GlobalData.debugger) return;
         switch (view.getId()) {
             case R.id.imageLock:
-                isLocked=!isLocked;
+                isLocked = !isLocked;
                 changeUI();
                 jumpToIdentity(UserType.OutUser);
                 break;
@@ -135,6 +139,9 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
                 break;
             case R.id.btnNoAccess:
                 mainPresenter.showCanNotAccess();
+                break;
+            case R.id.imageArrow:
+                muchClick();
                 break;
             default:
                 break;
@@ -216,35 +223,61 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            //提示是否退出软件
-            /*MyDialog myDialog = new MyDialog(this, R.style.MyDialog);
-            myDialog.setMessage("是否退出软件?");
-            myDialog.setYesOnclickListener("确定", new MyDialog.onYesOnclickListener() {
-                @Override
-                public void onYesOnclick() {
-                    //退出并锁定
-                    sendLockHexByStatus(false);
-                    finish();
-                    myDialog.dismiss();
-                }
-            });
-            myDialog.setNoOnclickListener("取消", new MyDialog.onNoOnclickListener() {
-                @Override
-                public void onNoClick() {
-                    myDialog.dismiss();
-                }
-            });
-            myDialog.show();*/
+
         }
 
         return super.onKeyDown(keyCode, event);
+    }
+
+    private void showExitDialog() {
+        //提示是否退出软件
+        MyDialog myDialog = new MyDialog(this, R.style.MyDialog);
+        myDialog.setTitle("提示");
+        myDialog.setMessage("是否退出软件?");
+        myDialog.setYesOnclickListener("确定", new MyDialog.onYesOnclickListener() {
+            @Override
+            public void onYesOnclick() {
+                //退出并锁定
+                sendLockHexByStatus(false);
+                finish();
+                myDialog.dismiss();
+            }
+        });
+        myDialog.setNoOnclickListener("取消", new MyDialog.onNoOnclickListener() {
+            @Override
+            public void onNoClick() {
+                myDialog.dismiss();
+            }
+        });
+        myDialog.show();
+    }
+
+
+
+    private void muchClick() {
+        /**
+         * 实现双击方法
+         * src 拷贝的源数组
+         * srcPos 从源数组的那个位置开始拷贝.
+         * dst 目标数组
+         * dstPos 从目标数组的那个位子开始写数据
+         * length 拷贝的元素的个数
+         */
+        System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
+        //实现左移，然后最后一个位置更新距离开机的时间，如果最后一个时间和最开始时间小于DURATION，即连续5次点击
+        mHits[mHits.length - 1] = SystemClock.uptimeMillis();
+        if (mHits[0] >= (SystemClock.uptimeMillis() - DURATION)) {
+            String tips = "您已在[" + DURATION + "]ms内连续点击【" + mHits.length + "】次了！！！";
+            Toast.makeText(MainActivity.this, tips, Toast.LENGTH_SHORT).show();
+            showExitDialog();
+        }
     }
 
     @Override
     protected void onDestroy() {
 
         CloseComPort(serialCom3);
-        CloseComPort(serialCom4);
+//        CloseComPort(serialCom4);
         super.onDestroy();
     }
 
