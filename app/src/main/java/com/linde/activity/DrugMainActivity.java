@@ -74,6 +74,7 @@ public class DrugMainActivity extends CustomActivity {
     private List<DrugBean> drugInBeanList = null;
     private List<DrugBean> drugOutBeanList = null;
     private LoadingDialog scanloadingDialog;
+    SerialControl serialCom4;//串口
     private Handler mHandler = new Handler() {
 
         @Override
@@ -131,8 +132,9 @@ public class DrugMainActivity extends CustomActivity {
     };
 
     private void showDialog() {
+        setAlpha(0.1f);
         MyDialog myDialog = new MyDialog(DrugMainActivity.this, R.style.MyDialog);
-        myDialog.setYesOnclickListener("确定", new MyDialog.onYesOnclickListener() {
+        myDialog.setYesOnclickListener("登出", new MyDialog.onYesOnclickListener() {
             @Override
             public void onYesOnclick() {
                 //退出并锁定
@@ -142,22 +144,23 @@ public class DrugMainActivity extends CustomActivity {
 //                Reader.rrlib.DisConnect()
                 scanloadingDialog.setLoadingText("扫描中..").setSuccessText("扫描完毕!").setFailedText("扫描失败!").show();
                 scanloadingDialog.show();
-                if (!isConnect232){
+                if (!isConnect232) {
                     mHandler.removeMessages(MSG_UPDATE_LISTVIEW);
                     mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
                     return;
                 }
-                currentTime=System.currentTimeMillis();
+                currentTime = System.currentTimeMillis();
                 timeOut();
                 dtIndexMap = new LinkedHashMap<String, Integer>();
                 Reader.rrlib.StartRead();
-
+                setAlpha(1.0f);
             }
         });
-        myDialog.setNoOnclickListener("取消", new MyDialog.onNoOnclickListener() {
+        myDialog.setNoOnclickListener("返回", new MyDialog.onNoOnclickListener() {
             @Override
             public void onNoClick() {
                 myDialog.dismiss();
+                setAlpha(1.0f);
             }
         });
         myDialog.show();
@@ -189,10 +192,9 @@ public class DrugMainActivity extends CustomActivity {
         drugMainPresenter = new DrugMainPresenter(this);
         initView();
         initData();
-        initSerialtty4();
+
     }
 
-    SerialControl serialCom4;//串口
 
     private void initSerialtty4() {
         DispQueue = new DispQueueThread();
@@ -213,41 +215,36 @@ public class DrugMainActivity extends CustomActivity {
         if (GlobalData.debugger) {
             initDebuggerData();
         } else {
+            initSerialtty4();
             connect232(connectCount);
         }
     }
 
     private void initDebuggerData() {
-        //添加参与扫描的天线
-
-
-//        mThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    //调试模式
-//                    mCurIvtClist = new ArrayList<>();
-//                    for (int i = 0; i < 10; i++) {
-//                        HashMap<String, String> stringStringHashMap = new HashMap<>();
-//                        stringStringHashMap.put("tagRssi", i + "");
-//                        stringStringHashMap.put("tagAnt", i + "");
-//                        stringStringHashMap.put("tagUid", "dsa3234sfadf43545435435" + i);
-//                        mFirstCurIvtClist.add(stringStringHashMap);
-//                        if (i < 8) {
-//                            mExitCurIvtClist.add(stringStringHashMap);
-//                        }
-//                    }
-//                    Thread.sleep(5000);
-//
-//                    mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
-//                    isScan = false;
-//                } catch (Exception ex) {
-//                    mThread = null;
-//                    mHandler.sendEmptyMessage(MSG_UPDATE_FAIL);
-//                }
-//            }
-//        });
-//        mThread.start();
+        mThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //调试模式
+                    mCurIvtClist = new ArrayList<>();
+                    for (int i = 0; i < 10; i++) {
+                        DrugBean drugBean = new DrugBean("新型冠状病毒[2019-nCoV]" + i + "", i + "", getDateString(), getDateString(), "dsa3234sfadf43545435435" + i, 0);
+                        drugBeanList.add(drugBean);
+                        if (i < 8) {
+                            drugInBeanList.add(drugBean);
+                        }
+                    }
+                    Thread.sleep(3000);
+                    mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
+                    isScan = false;
+                    mThread = null;
+                } catch (Exception ex) {
+                    mThread = null;
+                    mHandler.sendEmptyMessage(MSG_UPDATE_FAIL);
+                }
+            }
+        });
+        mThread.start();
     }
 
 
@@ -271,9 +268,10 @@ public class DrugMainActivity extends CustomActivity {
                     showDialog();
 
                 } else {
-                    Log.d("lalala", "退出按键,弹出dialog");
+               /*     Log.d("lalala", "退出按键,弹出dialog");
                     mHandler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
-                    drugMainPresenter.showDiaLog();
+                    drugMainPresenter.showDiaLog();*/
+                    showDialog();
                 }
             }
         });
@@ -320,7 +318,8 @@ public class DrugMainActivity extends CustomActivity {
     }
 
 
-    private  boolean isConnect232 =false;
+    private boolean isConnect232 = false;
+
     private void connect232(int count) {
         LoadingDialog connecttloadingDialog = new LoadingDialog(this);
         connecttloadingDialog.setLoadingText("连接扫描仪...").setSuccessText("连接成功!").setFailedText("连接失败!").show();
@@ -337,7 +336,7 @@ public class DrugMainActivity extends CustomActivity {
             if (result == 0) {
                 connecttloadingDialog.loadSuccess();
                 getDataNew();
-                isConnect232=true;
+                isConnect232 = true;
             } else {
                 connecttloadingDialog.loadFailed();
                 continueConnect(count);
@@ -373,15 +372,15 @@ public class DrugMainActivity extends CustomActivity {
         timeOut();
     }
 
-    private void timeOut(){
+    private void timeOut() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (System.currentTimeMillis()  -currentTime  >= 3000) {
+                if (System.currentTimeMillis() - currentTime >= 3000) {
                     Reader.rrlib.StopRead();
                     timer.cancel();
-                    if (!isLockAndExit){
+                    if (!isLockAndExit) {
                         sendLockHexByStatus(true);//扫描超时开锁
                     }
                 }

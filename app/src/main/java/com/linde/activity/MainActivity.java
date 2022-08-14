@@ -53,6 +53,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
     private String openHex = "AA55010D";
     private String lockHex = "AA55020D";
     private long currentTime = 0L;
+    private ImageView imageScan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,8 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
 
         imageSwipeStatus = findViewById(R.id.imageSwipeStatus);
         imageSwipeStatus.setBackgroundResource(R.mipmap.icon_noswipe);
+        imageScan = findViewById(R.id.imageScan);
+        imageScan.setBackgroundResource(R.mipmap.ic_scan);
 
         imageArrow = findViewById(R.id.imageArrow);
 
@@ -120,6 +123,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
         if (!GlobalData.debugger) return;
         switch (view.getId()) {
             case R.id.imageLock:
+                isLocked=!isLocked;
                 changeUI();
                 jumpToIdentity(UserType.OutUser);
                 break;
@@ -155,12 +159,14 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
         if (!isLocked) {
             imageLock.setBackgroundResource(R.mipmap.icon_nolock);
             imageSwipeStatus.setBackgroundResource(R.mipmap.icon_swipe);
+            imageScan.setBackgroundResource(R.mipmap.ic_scan_success);
             imageArrow.setVisibility(View.INVISIBLE);
             tvLockStatus1.setText(getString(R.string.unlock_tip));
             tvLockStatus2.setText("");
         } else {
             imageLock.setBackgroundResource(R.mipmap.icon_lock);
             imageSwipeStatus.setBackgroundResource(R.mipmap.icon_noswipe);
+            imageScan.setBackgroundResource(R.mipmap.ic_scan);
             imageArrow.setVisibility(View.VISIBLE);
             tvLockStatus1.setText(getString(R.string.lock_tip1));
             tvLockStatus2.setText(getString(R.string.lock_tip2));
@@ -183,7 +189,7 @@ public class MainActivity extends CustomActivity implements View.OnClickListener
                     intent.putExtra("UserType", type.toString());
                     startActivityForResult(intent, 998);
                 }
-            }, 1500);
+            }, 1000);
         }
     }
 

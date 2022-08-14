@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_marginLeft="36dp"
-    android:padding="12dp"
     android:layout_marginRight="36dp"
     android:background="@drawable/radius_border"
-    android:layout_height="match_parent">
+    android:padding="12dp">
 
     <ImageButton
         android:id="@+id/btnClose"
@@ -17,72 +17,77 @@
         android:background="@mipmap/icon_close" />
 
     <LinearLayout
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
 
         <TextView
-            android:text="DevicePath"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="DevicePath" />
+
         <EditText
             android:id="@+id/edDevicePath"
-            android:text="dev/ttyS4"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="dev/ttyS4" />
+
         <TextView
-            android:text="Port"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Port" />
+
         <EditText
             android:id="@+id/edPort"
-            android:text="9600"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="9600" />
 
         <TextView
-            android:text="Message"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Message" />
+
         <EditText
             android:id="@+id/edMessage"
-            android:text="AA55010D"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="AA55010D" />
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
             <Button
                 android:id="@+id/btnConnect"
-                android:text="连接"
-                android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="连接" />
+
             <Button
                 android:id="@+id/btnDisConnect"
-                android:text="断开"
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"/>
+                android:text="断开" />
+
             <Button
                 android:id="@+id/btnSend"
-                android:text="发送"
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"/>
+                android:text="发送" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tvResult"
-            android:text="result"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="result" />
     </LinearLayout>
-
-
 
 
 </RelativeLayout>

@@ -1,73 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/radius_border">
+    android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="460dp"
-        android:layout_height="160dp"
+        android:layout_height="200dp"
         android:layout_centerInParent="true"
-        android:background="@drawable/free_dialog_bg"
+        android:background="@drawable/radius_border_dialog"
         android:orientation="vertical">
         <TextView
+            android:layout_marginTop="20dp"
             android:layout_weight="1"
             android:id="@+id/title"
             android:layout_width="match_parent"
-            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:gravity="center_vertical"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="提示"
-            android:textColor="#38ADFF"
+            android:text="锁定并登出"
+            android:textColor="#000000"
             android:textSize="20sp"/>
         <TextView
             android:layout_weight="1"
             android:id="@+id/message"
-            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:gravity="center_vertical"
             android:textSize="19sp"
-            android:layout_width="wrap_content"
+            android:textColor="#636363"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:layout_gravity="center"
-            android:text="是否锁定并退出?"/>
-        <View
+            android:text="是否确定登出系统?"/>
+<!--        <View
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginTop="15dp"
-            android:background="#E4E4E4"/>
+            android:background="#E4E4E4"/>-->
         <LinearLayout
+            android:layout_marginTop="20dp"
             android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:orientation="horizontal">
             <Button
                 android:id="@+id/no"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_marginLeft="10dp"
-                android:background="@null"
+                android:layout_marginRight="12dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/radius_border_btncancle"
                 android:gravity="center"
                 android:lines="1"
-                android:text="取消"
-                android:textColor="#7D7D7D"
+                android:text="返回"
+                android:textColor="#ffffff"
                 android:textSize="17sp"/>
-            <View
+            <!--<View
                 android:layout_width="1px"
                 android:layout_height="match_parent"
-                android:background="#E4E4E4"/>
-            <Button
-                android:id="@+id/yes"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginRight="10dp"
-                android:background="@null"
-                android:gravity="center"
-                android:lines="1"
-                android:text="确定"
-                android:textColor="#38ADFF"
-                android:textSize="17sp"/>
+                android:background="#E4E4E4"/>-->
+                <Button
+                    android:id="@+id/yes"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/radius_border_btnok"
+                    android:gravity="center"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="16dp"
+                    android:lines="1"
+                    android:text="登出"
+                    android:textColor="#ffffff"
+                    android:textSize="17sp"/>
+
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
