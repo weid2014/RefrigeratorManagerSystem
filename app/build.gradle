@@ -19,7 +19,21 @@ android {
         }
     }
 
+    signingConfigs {
+        android_studio_egstar {
+            keyAlias KEY_ALIAS
+            keyPassword STORE_PASSWORD
+            storeFile file(STORE_FILE_PATH)
+            storePassword STORE_PASSWORD
+        }
+    }
+
     buildTypes {
+        debug{
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            signingConfig signingConfigs.android_studio_egstar
+        }
         release {
             //在这里添加：
             lintOptions {
@@ -28,6 +42,7 @@ android {
             }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.android_studio_egstar
         }
     }
     compileOptions {
