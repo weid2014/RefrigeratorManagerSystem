@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.linde.refrigeratormanagementsystem">
+    package="com.techjh.refrigeratormanagementsystem">
 
     <uses-permission android:name="android.permission.NFC" />
     <!-- 仅在支持NFC的设备上运行 -->
@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>
     <application
-        android:name="com.linde.application.MyApplication"
+        android:name="com.techjh.application.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -21,10 +21,10 @@
         android:theme="@style/Theme.RefrigeratorManagerSystem"
         tools:targetApi="31">
         <activity
-            android:name="com.linde.activity.SerialActivity"
+            android:name="com.techjh.activity.SerialActivity"
             android:exported="false" />
         <activity
-            android:name="com.linde.activity.MainActivity"
+            android:name="com.techjh.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,12 +48,12 @@
 
         </activity>
         <activity
-            android:name="com.linde.activity.SplashActivity"
+            android:name="com.techjh.activity.SplashActivity"
             android:exported="false" />
         <activity
-            android:name="com.linde.activity.DrugMainActivity"
+            android:name="com.techjh.activity.DrugMainActivity"
             android:exported="false" />
-        <activity android:name="com.linde.custom.CustomActivity" />
+        <activity android:name="com.techjh.custom.CustomActivity" />
     </application>
 
 </manifest>
