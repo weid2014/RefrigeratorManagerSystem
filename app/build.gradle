@@ -30,9 +30,9 @@ android {
 
     buildTypes {
         debug{
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
-            signingConfig signingConfigs.android_studio_egstar
+//            signingConfig signingConfigs.android_studio_egstar
         }
         release {
             //在这里添加：
@@ -42,7 +42,7 @@ android {
             }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-//            signingConfig signingConfigs.android_studio_egstar
+            signingConfig signingConfigs.android_studio_egstar
         }
     }
     compileOptions {
